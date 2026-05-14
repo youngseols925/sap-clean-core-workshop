@@ -8,26 +8,6 @@ REPORT zsd_openord_status
   LINE-COUNT 65
   MESSAGE-ID zmsd.
 
-
-*----------------------------------------------------------------------*
-* Selection Text 설명 (SE38 > Goto > Text Elements > Selection Texts)
-*----------------------------------------------------------------------*
-* S_AUDAT  : 오더 생성일
-* S_VKORG  : 영업 조직
-* S_VTWEG  : 유통 경로
-* S_SPART  : 제품군 (Division)
-* S_KUNNR  : 고객 코드
-* S_MATNR  : 자재 번호
-* S_MATKL  : 자재 그룹
-* S_AUART  : 오더 유형 (Sales Doc. Type)
-* P_OPEN   : 미납품 포함
-* P_PART   : 부분납품 포함
-* P_DELAY  : 납품 지연 건만
-* P_CREDIT : 신용 한도 초과 건만
-* P_KKBER  : 신용관리영역
-* P_SAVE   : Z-Table 저장
-* P_DELOLD : 기존 데이터 삭제 후 저장
-*----------------------------------------------------------------------*
 *----------------------------------------------------------------------*
 * 타입 정의
 *----------------------------------------------------------------------*
@@ -67,8 +47,8 @@ TYPES:
     open_qty     TYPE menge_d,     " 미납품 잔량
     dlv_qty      TYPE menge_d,     " 실납품 수량 (LIPS)
     bil_qty      TYPE menge_d,     " 청구 수량
-    dlv_rate     TYPE numc3,         " 납품율(% 정수)
-    bil_rate     TYPE numc3,         " 청구율(% 정수)
+    dlv_rate     TYPE p DECIMALS 2," 납품율(%)
+    bil_rate     TYPE p DECIMALS 2," 청구율(%)
     " ── 금액 ────────────────────────────────────────────────────
     waers        TYPE waers,       " 오더 통화
     ord_amt      TYPE wertv8,      " 오더 금액
@@ -87,55 +67,6 @@ TYPES:
     " ── 신호등 ──────────────────────────────────────────────────
     traffic      TYPE char1,       " G/Y/R
   END OF ty_openord,
-  " DB 저장 전용 구조 (Unicode 호환 - CURR/QUAN/INT → DEC/CHAR)
-  BEGIN OF ty_openord_db,
-    vbeln        TYPE vbeln_va,
-    posnr        TYPE posnr_va,
-    auart        TYPE auart,
-    audat        TYPE audat,
-    audat_ym     TYPE spmon,
-    elapsed_days TYPE char4,
-    aging_grp    TYPE char3,
-    vkorg        TYPE vkorg,
-    vtweg        TYPE vtweg,
-    spart        TYPE spart,
-    kunnr        TYPE kunnr,
-    kunnr_name   TYPE name1_gp,
-    kdgrp        TYPE kdgrp,
-    land1        TYPE land1_gp,
-    credit_group TYPE char3,
-    klimk        TYPE char23,
-    skfor        TYPE char23,
-    credit_exc   TYPE char1,
-    matnr        TYPE matnr,
-    arktx        TYPE arktx,
-    matkl        TYPE matkl,
-    mtart        TYPE mtart,
-    meins        TYPE meins,
-    vrkme        TYPE vrkme,
-    ord_qty      TYPE char15,
-    conf_qty     TYPE char15,
-    open_qty     TYPE char15,
-    dlv_qty      TYPE char15,
-    bil_qty      TYPE char15,
-    dlv_rate     TYPE numc3,
-    bil_rate     TYPE numc3,
-    waers        TYPE waers,
-    ord_amt      TYPE char15,
-    dlv_amt      TYPE char15,
-    bil_amt      TYPE char15,
-    open_amt     TYPE char15,
-    edatu        TYPE edatu,
-    lddat        TYPE lddat,
-    wbs_delay    TYPE char1,
-    delay_days   TYPE char4,
-    gbstk        TYPE char1,
-    dlv_stat     TYPE char1,
-    bil_stat     TYPE char1,
-    credit_exc2  TYPE char1,
-    traffic      TYPE char1,
-  END OF ty_openord_db,
-
 
   BEGIN OF ty_vbep_sel,
     vbeln TYPE vbeln_va,
@@ -288,29 +219,29 @@ DATA:
 SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.
   SELECT-OPTIONS:
     s_audat  FOR sy-datum   OBLIGATORY,    " 오더 생성일
-    s_vkorg  FOR sy-mandt,                " 영업 조직
-    s_vtweg  FOR sy-mandt,                " 유통 경로
-    s_spart  FOR sy-mandt,                " 제품군
-    s_kunnr  FOR sy-mandt,                " 고객 코드
-    s_matnr  FOR sy-mandt,                " 자재 번호
-    s_matkl  FOR sy-mandt,                " 자재 그룹
-    s_auart  FOR sy-mandt.                " 오더 유형
+    s_vkorg  FOR sy-mandt,                            " 영업 조직
+    s_vtweg  FOR sy-mandt,                            " 유통 경로
+    s_spart  FOR sy-mandt,                            " 제품군
+    s_kunnr  FOR sy-mandt,                            " 고객
+    s_matnr  FOR sy-mandt,                            " 자재
+    s_matkl  FOR sy-mandt,                            " 자재 그룹
+    s_auart  FOR sy-mandt.                            " 오더 유형
 SELECTION-SCREEN END OF BLOCK b1.
 
 SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-002.
   PARAMETERS:
-    p_open   TYPE char1 AS CHECKBOX DEFAULT 'X',   " 미납품 포함 (납품 전혀 없는 건)
-    p_part   TYPE char1 AS CHECKBOX DEFAULT 'X',   " 부분납품 포함 (일부 납품된 건)
-    p_delay  TYPE char1 AS CHECKBOX DEFAULT ' ',   " 납품 지연 건만 조회
-    p_credit TYPE char1 AS CHECKBOX DEFAULT ' ',   " 신용 한도 초과 건만 조회
-    p_kkber  TYPE kkber                DEFAULT '1000'.   " 신용관리영역 코드
+    p_open   TYPE char1 AS CHECKBOX DEFAULT 'X', " 미납품 포함
+    p_part   TYPE char1 AS CHECKBOX DEFAULT 'X', " 부분납품 포함
+    p_delay  TYPE char1 AS CHECKBOX DEFAULT ' ', " 지연 건만 조회
+    p_credit TYPE char1 AS CHECKBOX DEFAULT ' ', " 신용초과 건만
+    p_kkber  TYPE kkber                DEFAULT '1000'.      " 신용관리영역
 SELECTION-SCREEN END OF BLOCK b2.
 
 SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE TEXT-003.
   PARAMETERS:
-    p_save   TYPE xfeld AS CHECKBOX,               " Z-Table 저장 실행 여부
-    p_delold TYPE xfeld AS CHECKBOX DEFAULT 'X',   " 저장 전 기존 데이터 삭제
-    p_nodisp TYPE xfeld AS CHECKBOX DEFAULT ' '.   " 화면 출력 없이 저장만 (Batch 모드)
+    p_save   TYPE xfeld AS CHECKBOX,
+    p_delold TYPE xfeld AS CHECKBOX DEFAULT 'X',
+    p_nodisp TYPE xfeld AS CHECKBOX DEFAULT ' '.   " No screen output
 SELECTION-SCREEN END OF BLOCK b3.
 
 *----------------------------------------------------------------------*
@@ -322,9 +253,6 @@ AT SELECTION-SCREEN.
   ENDIF.
   IF p_open = ' ' AND p_part = ' '.
     MESSAGE e002(zmsd) WITH '조회 상태 조건을 최소 1개 이상 선택하세요.'.
-  ENDIF.
-  IF p_nodisp = 'X' AND p_save = ' '.
-    MESSAGE e003(zmsd) WITH '저장 없이 출력 생략은 불가합니다. Z-Table 저장을 체크해주세요.'.
   ENDIF.
 
 *----------------------------------------------------------------------*
@@ -355,11 +283,8 @@ START-OF-SELECTION.
   ENDIF.
 
 END-OF-SELECTION.
-  IF p_nodisp = ' '.   " 화면 출력 (기본)
+  IF p_nodisp = ' '.
     PERFORM f2_show_alv.
-  ELSE.
-    " 저장 전용 모드: ALV 출력 없이 완료 메시지만
-    MESSAGE s014(zmsd) WITH '저장 완료 (화면 출력 생략)'.
   ENDIF.
 
 *----------------------------------------------------------------------*
@@ -739,8 +664,8 @@ FORM f2_merge_data.
 
       " ── 납품율 / 청구율 ────────────────────────────────────
       IF gs_openord-ord_qty > 0.
-        gs_openord-dlv_rate = trunc( ( gs_openord-dlv_qty / gs_openord-ord_qty ) * 100 ).
-        gs_openord-bil_rate = trunc( ( gs_openord-bil_qty / gs_openord-ord_qty ) * 100 ).
+        gs_openord-dlv_rate = ( gs_openord-dlv_qty / gs_openord-ord_qty ) * 100.
+        gs_openord-bil_rate = ( gs_openord-bil_qty / gs_openord-ord_qty ) * 100.
       ENDIF.
 
       " ── 납품 상태 코드 ─────────────────────────────────────
@@ -826,14 +751,14 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM f2_save_ztable.
   DATA:
-    lt_openord_db TYPE STANDARD TABLE OF ty_openord_db,
-    ls_openord_db TYPE ty_openord_db.
+    lt_openord_db TYPE STANDARD TABLE OF ty_openord,
+    ls_openord_db TYPE ty_openord.
 
   " 기존 데이터 삭제
   IF p_delold = 'X'.
-    DELETE FROM zsdt_openord
-      WHERE vkorg IN s_vkorg
-        AND audat IN s_audat.
+*   DELETE FROM zsdt_openord   " Z-Table 활성화 후 주석 해제
+*     WHERE vkorg IN s_vkorg
+*       AND audat IN s_audat.
   ENDIF.
 
   " 단일 테이블 저장 (아이템 단위)
@@ -861,19 +786,16 @@ FORM f2_save_ztable.
     ls_openord_db-open_amt    = gs_openord-open_amt.
     ls_openord_db-bil_amt     = gs_openord-bil_amt.
     ls_openord_db-edatu       = gs_openord-edatu.
-    ls_openord_db-lddat       = gs_openord-lddat.
     ls_openord_db-wbs_delay   = gs_openord-wbs_delay.
     ls_openord_db-delay_days  = gs_openord-delay_days.
     ls_openord_db-aging_grp   = gs_openord-aging_grp.
-    ls_openord_db-gbstk       = gs_openord-gbstk.
     ls_openord_db-dlv_stat    = gs_openord-dlv_stat.
     ls_openord_db-bil_stat    = gs_openord-bil_stat.
     ls_openord_db-credit_exc  = gs_openord-credit_exc.
-    ls_openord_db-traffic     = gs_openord-traffic.
     APPEND ls_openord_db TO lt_openord_db.
   ENDLOOP.
 
-  INSERT zsdt_openord FROM TABLE lt_openord_db.
+*  INSERT zsdt_openord FROM TABLE lt_openord_db.  " Z-Table 활성화 후 주석 해제
   COMMIT WORK AND WAIT.
 
   gv_save_cnt = lines( lt_openord_db ).
@@ -962,6 +884,7 @@ FORM f2_show_alv.
       program_error        = 1
       OTHERS               = 2.
 ENDFORM.
+
 
 
 
