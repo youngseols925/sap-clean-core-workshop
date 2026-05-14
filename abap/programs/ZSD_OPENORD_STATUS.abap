@@ -260,7 +260,8 @@ SELECTION-SCREEN END OF BLOCK b2.
 SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE 'Z-Table 저장'.
   PARAMETERS:
     p_save   TYPE xfeld AS CHECKBOX,               " Z-Table 저장 실행 여부
-    p_delold TYPE xfeld AS CHECKBOX DEFAULT 'X'.   " 저장 전 기존 데이터 삭제
+    p_delold TYPE xfeld AS CHECKBOX DEFAULT 'X',   " 저장 전 기존 데이터 삭제
+    p_nodisp TYPE xfeld AS CHECKBOX DEFAULT ' '.   " 화면 출력 없이 저장만 (Batch 모드)
 SELECTION-SCREEN END OF BLOCK b3.
 
 *----------------------------------------------------------------------*
@@ -272,6 +273,9 @@ AT SELECTION-SCREEN.
   ENDIF.
   IF p_open = ' ' AND p_part = ' '.
     MESSAGE e002(zmsd) WITH '조회 상태 조건을 최소 1개 이상 선택하세요.'.
+  ENDIF.
+  IF p_nodisp = 'X' AND p_save = ' '.
+    MESSAGE e003(zmsd) WITH '저장 없이 출력 생략은 불가합니다. Z-Table 저장을 체크해주세요.'.
   ENDIF.
 
 *----------------------------------------------------------------------*
@@ -302,7 +306,12 @@ START-OF-SELECTION.
   ENDIF.
 
 END-OF-SELECTION.
-  PERFORM f2_show_alv.
+  IF p_nodisp = ' '.   " 화면 출력 (기본)
+    PERFORM f2_show_alv.
+  ELSE.
+    " 저장 전용 모드: ALV 출력 없이 완료 메시지만
+    MESSAGE s014(zmsd) WITH '저장 완료 (화면 출력 생략)'.
+  ENDIF.
 
 *----------------------------------------------------------------------*
 * FORM: STEP1 - VBAK 미완료 오더 헤더 조회
@@ -773,9 +782,9 @@ FORM f2_save_ztable.
 
   " 기존 데이터 삭제
   IF p_delold = 'X'.
-*   DELETE FROM zsdt_openord   " Z-Table 활성화 후 주석 해제
-*     WHERE vkorg IN s_vkorg
-*       AND audat IN s_audat.
+    DELETE FROM zsdt_openord
+      WHERE vkorg IN s_vkorg
+        AND audat IN s_audat.
   ENDIF.
 
   " 단일 테이블 저장 (아이템 단위)
@@ -812,7 +821,7 @@ FORM f2_save_ztable.
     APPEND ls_openord_db TO lt_openord_db.
   ENDLOOP.
 
-*  INSERT zsdt_openord FROM TABLE lt_openord_db.  " Z-Table 활성화 후 주석 해제
+  INSERT zsdt_openord FROM TABLE lt_openord_db.
   COMMIT WORK AND WAIT.
 
   gv_save_cnt = lines( lt_openord_db ).
