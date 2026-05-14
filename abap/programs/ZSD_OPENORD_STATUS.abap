@@ -122,7 +122,7 @@ TYPES:
     vtweg TYPE vtweg,
     spart TYPE spart,
     kunnr TYPE kunnr,
-    gbstk TYPE gbstk,
+    waerk TYPE waerk,
     netwr TYPE netwr_ap,
     knumv TYPE knumv,
   END OF ty_vbak2,
@@ -139,7 +139,6 @@ TYPES:
     netwr  TYPE netwr_ap,
     waers  TYPE waers,
     abgru  TYPE abgru,
-    gbsta  TYPE gbsta,
   END OF ty_vbap2,
   BEGIN OF ty_vbfa_sel,
     vbelv   TYPE vbfa-vbelv,
@@ -294,7 +293,7 @@ FORM f2_get_vbak.
   REFRESH gt_vbak2.
 
   " 오더 상태: 'C'=완료 제외, ' '=미처리, 'A'=부분처리만
-  SELECT vbeln erdat audat auart vkorg vtweg spart kunnr gbstk netwr knumv
+  SELECT vbeln erdat audat auart vkorg vtweg spart kunnr netwr waerk knumv
     INTO TABLE gt_vbak2
     FROM vbak
     WHERE audat IN s_audat
@@ -303,8 +302,7 @@ FORM f2_get_vbak.
       AND spart IN s_spart
       AND kunnr IN s_kunnr
       AND auart IN s_auart
-      AND vbtyp = 'C'
-      AND gbstk <> 'C'.   " 완전 완료 제외
+      AND vbtyp = 'C'.
 
   DESCRIBE TABLE gt_vbak2 LINES gv_lines.
   MESSAGE s003(zmsd) WITH gv_lines '건의 Open Order 헤더 조회'.
@@ -325,14 +323,13 @@ FORM f2_get_vbap.
     APPEND ls_vbeln TO lt_vbeln.
   ENDLOOP.
 
-  SELECT vbeln posnr matnr matkl arktx meins vrkme kwmeng netwr waers abgru gbsta
+  SELECT vbeln posnr matnr matkl arktx meins vrkme kwmeng netwr waers abgru
     INTO TABLE gt_vbap2
     FROM vbap
     WHERE vbeln IN lt_vbeln
       AND matnr IN s_matnr
       AND matkl IN s_matkl
-      AND abgru = ' '       " 거부 안 된 것
-      AND gbsta <> 'C'.     " 아이템 완료 제외
+      AND abgru = ' '.       " 거부 안 된 것
 
   DESCRIBE TABLE gt_vbap2 LINES gv_lines.
   MESSAGE s004(zmsd) WITH gv_lines '건의 Open Order 아이템 조회'.
@@ -550,9 +547,8 @@ FORM f2_merge_data.
       gs_openord-matkl     = ls_vbap-matkl.
       gs_openord-meins     = ls_vbap-meins.
       gs_openord-vrkme     = ls_vbap-vrkme.
-      gs_openord-waers     = ls_vbap-waers.
+      gs_openord-waers     = ls_vbak-waerk.
       gs_openord-ord_qty   = ls_vbap-kwmeng.
-      gs_openord-gbstk     = ls_vbak-gbstk.
 
       " ── 경과일수 및 Aging 구간 계산 ──────────────────────
       gs_openord-elapsed_days = sy-datum - ls_vbak-audat.
