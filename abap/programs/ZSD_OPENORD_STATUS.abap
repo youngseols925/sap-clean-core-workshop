@@ -236,7 +236,7 @@ DATA:
 *----------------------------------------------------------------------*
 * Selection Screen
 *----------------------------------------------------------------------*
-SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE '조회 조건'.
+SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.
   SELECT-OPTIONS:
     s_audat  FOR sy-datum   OBLIGATORY,    " 오더 생성일
     s_vkorg  FOR sy-mandt,                " 영업 조직
@@ -248,7 +248,7 @@ SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE '조회 조건'.
     s_auart  FOR sy-mandt.                " 오더 유형
 SELECTION-SCREEN END OF BLOCK b1.
 
-SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE '상태 필터'.
+SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-002.
   PARAMETERS:
     p_open   TYPE char1 AS CHECKBOX DEFAULT 'X',   " 미납품 포함 (납품 전혀 없는 건)
     p_part   TYPE char1 AS CHECKBOX DEFAULT 'X',   " 부분납품 포함 (일부 납품된 건)
@@ -257,12 +257,20 @@ SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE '상태 필터'.
     p_kkber  TYPE kkber                DEFAULT '1000'.   " 신용관리영역 코드
 SELECTION-SCREEN END OF BLOCK b2.
 
-SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE 'Z-Table 저장'.
+SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE TEXT-003.
   PARAMETERS:
     p_save   TYPE xfeld AS CHECKBOX,               " Z-Table 저장 실행 여부
     p_delold TYPE xfeld AS CHECKBOX DEFAULT 'X',   " 저장 전 기존 데이터 삭제
     p_nodisp TYPE xfeld AS CHECKBOX DEFAULT ' '.   " 화면 출력 없이 저장만 (Batch 모드)
 SELECTION-SCREEN END OF BLOCK b3.
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+  TEXT-001 = 'Search Criteria'.
+  TEXT-002 = 'Status Filter'.
+  TEXT-003 = 'Save to Z-Table'.
 
 *----------------------------------------------------------------------*
 * AT SELECTION-SCREEN
