@@ -87,6 +87,55 @@ TYPES:
     " ── 신호등 ──────────────────────────────────────────────────
     traffic      TYPE char1,       " G/Y/R
   END OF ty_openord,
+  " DB 저장 전용 구조 (Unicode 호환 - CURR/QUAN/INT → DEC/CHAR)
+  BEGIN OF ty_openord_db,
+    vbeln        TYPE vbeln_va,
+    posnr        TYPE posnr_va,
+    auart        TYPE auart,
+    audat        TYPE audat,
+    audat_ym     TYPE spmon,
+    elapsed_days TYPE char4,
+    aging_grp    TYPE char3,
+    vkorg        TYPE vkorg,
+    vtweg        TYPE vtweg,
+    spart        TYPE spart,
+    kunnr        TYPE kunnr,
+    kunnr_name   TYPE name1_gp,
+    kdgrp        TYPE kdgrp,
+    land1        TYPE land1_gp,
+    credit_group TYPE char3,
+    klimk        TYPE char23,
+    skfor        TYPE char23,
+    credit_exc   TYPE char1,
+    matnr        TYPE matnr,
+    arktx        TYPE arktx,
+    matkl        TYPE matkl,
+    mtart        TYPE mtart,
+    meins        TYPE meins,
+    vrkme        TYPE vrkme,
+    ord_qty      TYPE char15,
+    conf_qty     TYPE char15,
+    open_qty     TYPE char15,
+    dlv_qty      TYPE char15,
+    bil_qty      TYPE char15,
+    dlv_rate     TYPE numc3,
+    bil_rate     TYPE numc3,
+    waers        TYPE waers,
+    ord_amt      TYPE char15,
+    dlv_amt      TYPE char15,
+    bil_amt      TYPE char15,
+    open_amt     TYPE char15,
+    edatu        TYPE edatu,
+    lddat        TYPE lddat,
+    wbs_delay    TYPE char1,
+    delay_days   TYPE char4,
+    gbstk        TYPE char1,
+    dlv_stat     TYPE char1,
+    bil_stat     TYPE char1,
+    credit_exc2  TYPE char1,
+    traffic      TYPE char1,
+  END OF ty_openord_db,
+
 
   BEGIN OF ty_vbep_sel,
     vbeln TYPE vbeln_va,
@@ -777,8 +826,8 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM f2_save_ztable.
   DATA:
-    lt_openord_db TYPE STANDARD TABLE OF ty_openord,
-    ls_openord_db TYPE ty_openord.
+    lt_openord_db TYPE STANDARD TABLE OF ty_openord_db,
+    ls_openord_db TYPE ty_openord_db.
 
   " 기존 데이터 삭제
   IF p_delold = 'X'.
@@ -812,12 +861,15 @@ FORM f2_save_ztable.
     ls_openord_db-open_amt    = gs_openord-open_amt.
     ls_openord_db-bil_amt     = gs_openord-bil_amt.
     ls_openord_db-edatu       = gs_openord-edatu.
+    ls_openord_db-lddat       = gs_openord-lddat.
     ls_openord_db-wbs_delay   = gs_openord-wbs_delay.
     ls_openord_db-delay_days  = gs_openord-delay_days.
     ls_openord_db-aging_grp   = gs_openord-aging_grp.
+    ls_openord_db-gbstk       = gs_openord-gbstk.
     ls_openord_db-dlv_stat    = gs_openord-dlv_stat.
     ls_openord_db-bil_stat    = gs_openord-bil_stat.
     ls_openord_db-credit_exc  = gs_openord-credit_exc.
+    ls_openord_db-traffic     = gs_openord-traffic.
     APPEND ls_openord_db TO lt_openord_db.
   ENDLOOP.
 
