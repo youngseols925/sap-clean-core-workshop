@@ -224,14 +224,14 @@ DATA:
 *----------------------------------------------------------------------*
 SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.
   SELECT-OPTIONS:
-    s_audat  FOR vbak-audat OBLIGATORY,    " 오더 생성일
-    s_vkorg  FOR vbak-vkorg,               " 영업 조직
-    s_vtweg  FOR vbak-vtweg,               " 유통 경로
-    s_spart  FOR vbak-spart,               " 제품군
-    s_kunnr  FOR vbak-kunnr,               " 고객
-    s_matnr  FOR vbap-matnr,               " 자재
-    s_matkl  FOR vbap-matkl,               " 자재 그룹
-    s_auart  FOR vbak-auart.               " 오더 유형
+    s_audat  FOR sy-datum   OBLIGATORY,    " 오더 생성일
+    s_vkorg  FOR sy-mandt,                            " 영업 조직
+    s_vtweg  FOR sy-mandt,                            " 유통 경로
+    s_spart  FOR sy-mandt,                            " 제품군
+    s_kunnr  FOR sy-mandt,                            " 고객
+    s_matnr  FOR sy-mandt,                            " 자재
+    s_matkl  FOR sy-mandt,                            " 자재 그룹
+    s_auart  FOR sy-mandt.                            " 오더 유형
 SELECTION-SCREEN END OF BLOCK b1.
 
 SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-002.
@@ -240,7 +240,7 @@ SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-002.
     p_part   TYPE char1 AS CHECKBOX DEFAULT 'X', " 부분납품 포함
     p_delay  TYPE char1 AS CHECKBOX DEFAULT ' ', " 지연 건만 조회
     p_credit TYPE char1 AS CHECKBOX DEFAULT ' ', " 신용초과 건만
-    p_kkber  TYPE knkk-kkber DEFAULT '1000'.      " 신용관리영역
+    p_kkber  TYPE kkber                DEFAULT '1000'.      " 신용관리영역
 SELECTION-SCREEN END OF BLOCK b2.
 
 SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE TEXT-003.
@@ -890,6 +890,7 @@ FORM f2_show_alv.
       program_error        = 1
       OTHERS               = 2.
 ENDFORM.
+
 
 
 
