@@ -37,7 +37,7 @@ sap-clean-core-workshop/
 | `ZSD_SELLIN_PERF` | Sell-In 실적현황 조회 + Z-Table 저장 | VBAK, VBAP, VBFA, VBRK, VBRP, LIPS, KONV, MBEW, KNA1, KNVV, TCURR |
 | `ZSD_OPENORD_STATUS` | Open Order 진행현황 조회 + Z-Table 저장 | VBAK, VBAP, VBFA, VBEP, LIPS, VBRP, KONV, KNA1, KNVV, KNKK |
 
-**Z-Table 4개:** `ZSDSI_HEADER`, `ZSDSI_ITEM`, `ZSDOO_HEADER`, `ZSDOO_ITEM`
+**Z-Table 2개:** `ZSDT_SELLIN` (Sell-In 아이템 단위 저장), `ZSDT_OPENORD` (Open Order 아이템 단위 저장)
 
 ### TO-BE: SAP Datasphere Clean Core 방식
 
