@@ -536,18 +536,16 @@ FORM f_get_knvv.
 ENDFORM.
 
 *----------------------------------------------------------------------*
-* FORM: STEP10 - 전년동기 실적 조회 (ZSDSI_HEADER에서)
+* FORM: STEP10 - 전년동기 실적 조회 (ZSDT_SELLIN에서 GROUP BY)
 *----------------------------------------------------------------------*
 FORM f_get_py_amt.
   REFRESH gt_py_amt.
 
   " 선택 기간의 전년도 계산
   DATA: lv_py_low  TYPE spmon,
-        lv_py_high TYPE spmon,
-        lv_low_gjahr TYPE gjahr,
-        lv_high_gjahr TYPE gjahr.
+        lv_py_high TYPE spmon.
 
-  " AUDAT 범위에서 년월 추출 (저장된 ZSDSI_HEADER에서 전년 조회)
+  " AUDAT 범위에서 년월 추출 (저장된 ZSDT_SELLIN에서 전년 조회)
   IF s_audat-low IS NOT INITIAL.
     lv_py_low = s_audat-low(6).
     lv_py_low+0(4) = lv_py_low+0(4) - 1.
@@ -559,9 +557,10 @@ FORM f_get_py_amt.
 
   CHECK lv_py_low IS NOT INITIAL.
 
-  SELECT vkorg kunnr matnr spart matkl spmon SUM( net_amt ) AS net_amt
+  " 단일 테이블에서 GROUP BY 집계로 전년동기 금액 조회
+  SELECT vkorg kunnr matnr spart matkl spmon SUM( netwr ) AS net_amt
     INTO TABLE gt_py_amt
-    FROM zsdsi_header
+    FROM zsdt_sellin
     WHERE vkorg IN s_vkorg
       AND kunnr IN s_kunnr
       AND spmon BETWEEN lv_py_low AND lv_py_high
@@ -818,14 +817,12 @@ FORM f_merge_data.
 ENDFORM.
 
 *----------------------------------------------------------------------*
-* FORM: Z-Table 저장
+* FORM: Z-Table 저장 (단일 테이블 ZSDT_SELLIN)
 *----------------------------------------------------------------------*
 FORM f_save_ztable.
   DATA:
-    lt_si_header TYPE STANDARD TABLE OF zsdsi_header,
-    lt_si_item   TYPE STANDARD TABLE OF zsdsi_item,
-    ls_si_header TYPE zsdsi_header,
-    ls_si_item   TYPE zsdsi_item.
+    lt_sellin_db TYPE STANDARD TABLE OF zsdt_sellin,
+    ls_sellin_db TYPE zsdt_sellin.
 
   CLEAR: gv_save_cnt, gv_err_cnt.
 
@@ -834,106 +831,61 @@ FORM f_save_ztable.
     DATA(lv_spmon_low)  = CONV spmon( s_audat-low(6)  ).
     DATA(lv_spmon_high) = CONV spmon( s_audat-high(6) ).
 
-    DELETE FROM zsdsi_item
-      WHERE vkorg IN s_vkorg
-        AND spmon BETWEEN lv_spmon_low AND lv_spmon_high.
-
-    DELETE FROM zsdsi_header
+    DELETE FROM zsdt_sellin
       WHERE vkorg IN s_vkorg
         AND spmon BETWEEN lv_spmon_low AND lv_spmon_high.
   ENDIF.
 
-  " ── 아이템 저장 ────────────────────────────────────────────
+  " ── 단일 테이블 저장 (아이템 단위, 집계는 SELECT GROUP BY로) ─
   LOOP AT gt_sellin INTO gs_sellin.
-    CLEAR ls_si_item.
-    ls_si_item-mandt      = sy-mandt.
-    ls_si_item-vbeln      = gs_sellin-vbeln.
-    ls_si_item-posnr      = gs_sellin-posnr.
-    ls_si_item-vkorg      = gs_sellin-vkorg.
-    ls_si_item-kunnr      = gs_sellin-kunnr.
-    ls_si_item-matnr      = gs_sellin-matnr.
-    ls_si_item-spart      = gs_sellin-spart.
-    ls_si_item-matkl      = gs_sellin-matkl.
-    ls_si_item-gjahr      = gs_sellin-gjahr.
-    ls_si_item-spmon      = gs_sellin-spmon.
-    ls_si_item-waers      = gs_sellin-lwaers.
-    ls_si_item-ord_qty    = gs_sellin-ord_qty.
-    ls_si_item-dlv_qty    = gs_sellin-dlv_qty.
-    ls_si_item-bil_qty    = gs_sellin-bil_qty.
-    ls_si_item-netwr      = gs_sellin-net_lc.
-    ls_si_item-disc_amt   = gs_sellin-disc_amt.
-    ls_si_item-cogs       = gs_sellin-cogs_lc.
-    ls_si_item-margin     = gs_sellin-margin_lc.
-    ls_si_item-disc_rate  = gs_sellin-disc_rate.
-    ls_si_item-margin_rate = gs_sellin-margin_rate.
-    ls_si_item-vbreln     = gs_sellin-vbreln.
-    ls_si_item-vbrelp     = gs_sellin-vbrelp.
-    ls_si_item-lips_vl    = gs_sellin-lips_vl.
-    ls_si_item-pr00_kbetr = gs_sellin-pr00_kbetr.
-    ls_si_item-mwst_rate  = gs_sellin-mwst_rate.
-    ls_si_item-audat      = gs_sellin-audat.
-    ls_si_item-erdat      = sy-datum.
-    APPEND ls_si_item TO lt_si_item.
+    CLEAR ls_sellin_db.
+    ls_sellin_db-mandt       = sy-mandt.
+    ls_sellin_db-vbeln       = gs_sellin-vbeln.
+    ls_sellin_db-posnr       = gs_sellin-posnr.
+    ls_sellin_db-vkorg       = gs_sellin-vkorg.
+    ls_sellin_db-kunnr       = gs_sellin-kunnr.
+    ls_sellin_db-matnr       = gs_sellin-matnr.
+    ls_sellin_db-spart       = gs_sellin-spart.
+    ls_sellin_db-matkl       = gs_sellin-matkl.
+    ls_sellin_db-gjahr       = gs_sellin-gjahr.
+    ls_sellin_db-spmon       = gs_sellin-spmon.
+    ls_sellin_db-audat       = gs_sellin-audat.
+    ls_sellin_db-waers       = gs_sellin-lwaers.
+    ls_sellin_db-ord_qty     = gs_sellin-ord_qty.
+    ls_sellin_db-dlv_qty     = gs_sellin-dlv_qty.
+    ls_sellin_db-bil_qty     = gs_sellin-bil_qty.
+    ls_sellin_db-dlv_rate    = gs_sellin-dlv_rate.
+    ls_sellin_db-bil_rate    = gs_sellin-bil_rate.
+    ls_sellin_db-netwr       = gs_sellin-net_lc.
+    ls_sellin_db-disc_amt    = gs_sellin-disc_amt.
+    ls_sellin_db-cogs        = gs_sellin-cogs_lc.
+    ls_sellin_db-margin      = gs_sellin-margin_lc.
+    ls_sellin_db-disc_rate   = gs_sellin-disc_rate.
+    ls_sellin_db-margin_rate = gs_sellin-margin_rate.
+    ls_sellin_db-pr00_kbetr  = gs_sellin-pr00_kbetr.
+    ls_sellin_db-mwst_rate   = gs_sellin-mwst_rate.
+    ls_sellin_db-py_amt      = gs_sellin-py_amt.
+    ls_sellin_db-achv_rate   = gs_sellin-achv_rate.
+    ls_sellin_db-vbreln      = gs_sellin-vbreln.
+    ls_sellin_db-vbrelp      = gs_sellin-vbrelp.
+    ls_sellin_db-lips_vl     = gs_sellin-lips_vl.
+    ls_sellin_db-erdat       = sy-datum.
+    ls_sellin_db-ernam       = sy-uname.
+    APPEND ls_sellin_db TO lt_sellin_db.
   ENDLOOP.
 
-  " ── 헤더 집계 저장 (COLLECT 방식) ─────────────────────────
-  LOOP AT gt_sellin INTO gs_sellin.
-    CLEAR ls_si_header.
-    ls_si_header-mandt      = sy-mandt.
-    ls_si_header-vkorg      = gs_sellin-vkorg.
-    ls_si_header-matnr      = gs_sellin-matnr.
-    ls_si_header-kunnr      = gs_sellin-kunnr.
-    ls_si_header-spart      = gs_sellin-spart.
-    ls_si_header-matkl      = gs_sellin-matkl.
-    ls_si_header-gjahr      = gs_sellin-gjahr.
-    ls_si_header-spmon      = gs_sellin-spmon.
-    ls_si_header-waers      = gs_sellin-lwaers.
-    ls_si_header-ord_qty    = gs_sellin-ord_qty.
-    ls_si_header-dlv_qty    = gs_sellin-dlv_qty.
-    ls_si_header-bil_qty    = gs_sellin-bil_qty.
-    ls_si_header-net_amt    = gs_sellin-net_lc.
-    ls_si_header-disc_amt   = gs_sellin-disc_amt.
-    ls_si_header-cost_amt   = gs_sellin-cogs_lc.
-    ls_si_header-margin     = gs_sellin-margin_lc.
-    ls_si_header-py_amt     = gs_sellin-py_amt.
-    COLLECT ls_si_header INTO lt_si_header.
-  ENDLOOP.
-
-  " 집계 후 비율 재계산
-  LOOP AT lt_si_header INTO ls_si_header.
-    IF ls_si_header-ord_qty > 0.
-      ls_si_header-dlv_rate = ( ls_si_header-dlv_qty / ls_si_header-ord_qty ) * 100.
-      ls_si_header-bil_rate = ( ls_si_header-bil_qty / ls_si_header-ord_qty ) * 100.
-    ENDIF.
-    IF ls_si_header-net_amt > 0.
-      ls_si_header-margin_rate = ( ls_si_header-margin / ls_si_header-net_amt ) * 100.
-    ENDIF.
-    IF ls_si_header-py_amt > 0.
-      ls_si_header-achv_rate = ( ls_si_header-net_amt / ls_si_header-py_amt ) * 100.
-    ENDIF.
-    ls_si_header-erdat = sy-datum.
-    ls_si_header-ernam = sy-uname.
-    ls_si_header-updat = sy-datum.
-    MODIFY lt_si_header FROM ls_si_header.
-  ENDLOOP.
-
-  " ── DB 저장 (BAPI 없이 직접 INSERT) ───────────────────────
-  INSERT zsdsi_item FROM TABLE lt_si_item.
+  " ── DB INSERT ───────────────────────────────────────────────
+  INSERT zsdt_sellin FROM TABLE lt_sellin_db.
   IF sy-subrc = 0.
-    gv_save_cnt = lines( lt_si_item ).
+    gv_save_cnt = lines( lt_sellin_db ).
   ELSE.
-    gv_err_cnt  = lines( lt_si_item ).
-    MESSAGE w012(zmsd) WITH '아이템 저장 중 오류 발생'.
-  ENDIF.
-
-  INSERT zsdsi_header FROM TABLE lt_si_header.
-  IF sy-subrc <> 0.
-    MESSAGE w013(zmsd) WITH '헤더 저장 중 오류 발생'.
+    gv_err_cnt  = lines( lt_sellin_db ).
+    MESSAGE w012(zmsd) WITH 'ZSDT_SELLIN 저장 중 오류 발생'.
   ENDIF.
 
   COMMIT WORK AND WAIT.
 
-  MESSAGE s014(zmsd) WITH gv_save_cnt '건 저장 완료 (오류:' gv_err_cnt ')'.
+  MESSAGE s014(zmsd) WITH gv_save_cnt '건 ZSDT_SELLIN 저장 완료 (오류:' gv_err_cnt ')'.
 ENDFORM.
 
 *----------------------------------------------------------------------*

@@ -699,94 +699,62 @@ FORM f2_filter_result.
 ENDFORM.
 
 *----------------------------------------------------------------------*
-* FORM: Z-Table 저장
+* FORM: Z-Table 저장 (단일 테이블 ZSDT_OPENORD)
 *----------------------------------------------------------------------*
 FORM f2_save_ztable.
   DATA:
-    lt_oo_header TYPE STANDARD TABLE OF zsdoo_header,
-    lt_oo_item   TYPE STANDARD TABLE OF zsdoo_item,
-    ls_oo_header TYPE zsdoo_header,
-    ls_oo_item   TYPE zsdoo_item.
+    lt_openord_db TYPE STANDARD TABLE OF zsdt_openord,
+    ls_openord_db TYPE zsdt_openord.
 
   " 기존 데이터 삭제
   IF p_delold = 'X'.
-    DELETE FROM zsdoo_item
+    DELETE FROM zsdt_openord
       WHERE vkorg IN s_vkorg
         AND audat IN s_audat.
-    DELETE FROM zsdoo_header
-      WHERE vkorg IN s_vkorg
-        AND audat_ym >= s_audat-low(6)
-        AND audat_ym <= s_audat-high(6).
   ENDIF.
 
-  " 아이템 저장
+  " 단일 테이블 저장 (아이템 단위)
   LOOP AT gt_openord INTO gs_openord.
-    CLEAR ls_oo_item.
-    ls_oo_item-mandt      = sy-mandt.
-    ls_oo_item-vbeln      = gs_openord-vbeln.
-    ls_oo_item-posnr      = gs_openord-posnr.
-    ls_oo_item-auart      = gs_openord-auart.
-    ls_oo_item-audat      = gs_openord-audat.
-    ls_oo_item-vkorg      = gs_openord-vkorg.
-    ls_oo_item-kunnr      = gs_openord-kunnr.
-    ls_oo_item-matnr      = gs_openord-matnr.
-    ls_oo_item-spart      = gs_openord-spart.
-    ls_oo_item-matkl      = gs_openord-matkl.
-    ls_oo_item-waers      = gs_openord-waers.
-    ls_oo_item-ord_qty    = gs_openord-ord_qty.
-    ls_oo_item-conf_qty   = gs_openord-conf_qty.
-    ls_oo_item-open_qty   = gs_openord-open_qty.
-    ls_oo_item-bil_qty    = gs_openord-bil_qty.
-    ls_oo_item-ord_amt    = gs_openord-ord_amt.
-    ls_oo_item-open_amt   = gs_openord-open_amt.
-    ls_oo_item-edatu      = gs_openord-edatu.
-    ls_oo_item-wbs_delay  = gs_openord-wbs_delay.
-    ls_oo_item-aging_grp  = gs_openord-aging_grp.
-    ls_oo_item-dlv_stat   = gs_openord-dlv_stat.
-    ls_oo_item-bil_stat   = gs_openord-bil_stat.
-    ls_oo_item-credit_exc = gs_openord-credit_exc.
-    ls_oo_item-erdat      = sy-datum.
-    APPEND ls_oo_item TO lt_oo_item.
+    CLEAR ls_openord_db.
+    ls_openord_db-mandt       = sy-mandt.
+    ls_openord_db-vbeln       = gs_openord-vbeln.
+    ls_openord_db-posnr       = gs_openord-posnr.
+    ls_openord_db-auart       = gs_openord-auart.
+    ls_openord_db-audat       = gs_openord-audat.
+    ls_openord_db-audat_ym    = gs_openord-audat_ym.
+    ls_openord_db-vkorg       = gs_openord-vkorg.
+    ls_openord_db-kunnr       = gs_openord-kunnr.
+    ls_openord_db-matnr       = gs_openord-matnr.
+    ls_openord_db-spart       = gs_openord-spart.
+    ls_openord_db-matkl       = gs_openord-matkl.
+    ls_openord_db-waers       = gs_openord-waers.
+    ls_openord_db-ord_qty     = gs_openord-ord_qty.
+    ls_openord_db-conf_qty    = gs_openord-conf_qty.
+    ls_openord_db-open_qty    = gs_openord-open_qty.
+    ls_openord_db-dlv_qty     = gs_openord-dlv_qty.
+    ls_openord_db-bil_qty     = gs_openord-bil_qty.
+    ls_openord_db-dlv_rate    = gs_openord-dlv_rate.
+    ls_openord_db-bil_rate    = gs_openord-bil_rate.
+    ls_openord_db-ord_amt     = gs_openord-ord_amt.
+    ls_openord_db-open_amt    = gs_openord-open_amt.
+    ls_openord_db-bil_amt     = gs_openord-bil_amt.
+    ls_openord_db-edatu       = gs_openord-edatu.
+    ls_openord_db-wbs_delay   = gs_openord-wbs_delay.
+    ls_openord_db-delay_days  = gs_openord-delay_days.
+    ls_openord_db-aging_grp   = gs_openord-aging_grp.
+    ls_openord_db-dlv_stat    = gs_openord-dlv_stat.
+    ls_openord_db-bil_stat    = gs_openord-bil_stat.
+    ls_openord_db-credit_exc  = gs_openord-credit_exc.
+    ls_openord_db-erdat       = sy-datum.
+    ls_openord_db-ernam       = sy-uname.
+    APPEND ls_openord_db TO lt_openord_db.
   ENDLOOP.
 
-  " 헤더 집계
-  LOOP AT gt_openord INTO gs_openord.
-    CLEAR ls_oo_header.
-    ls_oo_header-mandt      = sy-mandt.
-    ls_oo_header-vkorg      = gs_openord-vkorg.
-    ls_oo_header-kunnr      = gs_openord-kunnr.
-    ls_oo_header-spart      = gs_openord-spart.
-    ls_oo_header-matkl      = gs_openord-matkl.
-    ls_oo_header-audat_ym   = gs_openord-audat_ym.
-    ls_oo_header-waers      = gs_openord-waers.
-    ls_oo_header-ord_cnt    = 1.
-    ls_oo_header-ord_amt    = gs_openord-ord_amt.
-    ls_oo_header-open_amt   = gs_openord-open_amt.
-    IF gs_openord-wbs_delay = 'X'.
-      ls_oo_header-delay_cnt = 1.
-    ENDIF.
-    IF gs_openord-credit_exc = 'X'.
-      ls_oo_header-credit_exc = 1.
-    ENDIF.
-    COLLECT ls_oo_header INTO lt_oo_header.
-  ENDLOOP.
-
-  " 비율 재계산
-  LOOP AT lt_oo_header INTO ls_oo_header.
-    IF ls_oo_header-ord_amt > 0.
-      ls_oo_header-dlv_rate = 100 - ( ls_oo_header-open_amt / ls_oo_header-ord_amt * 100 ).
-    ENDIF.
-    ls_oo_header-erdat = sy-datum.
-    ls_oo_header-ernam = sy-uname.
-    MODIFY lt_oo_header FROM ls_oo_header.
-  ENDLOOP.
-
-  INSERT zsdoo_item FROM TABLE lt_oo_item.
-  INSERT zsdoo_header FROM TABLE lt_oo_header.
+  INSERT zsdt_openord FROM TABLE lt_openord_db.
   COMMIT WORK AND WAIT.
 
-  gv_save_cnt = lines( lt_oo_item ).
-  MESSAGE s013(zmsd) WITH gv_save_cnt '건 Z-Table 저장 완료'.
+  gv_save_cnt = lines( lt_openord_db ).
+  MESSAGE s013(zmsd) WITH gv_save_cnt '건 ZSDT_OPENORD 저장 완료'.
 ENDFORM.
 
 *----------------------------------------------------------------------*

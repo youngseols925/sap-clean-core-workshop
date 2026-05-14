@@ -50,36 +50,10 @@ SAP Standard
 
 ## 2. Z-Table DDIC 정의
 
-### 2-1. ZSDSI_HEADER (Sell-In 집계 헤더)
+> **설계 원칙**: Header/Item 분리 없이 오더 아이템 단위로 단일 테이블에 저장.
+> 집계(월별 합산 등)는 SELECT + GROUP BY로 처리.
 
-| 필드명 | 타입 | 길이 | 키 | 설명 |
-|--------|------|------|----|------|
-| MANDT | MANDT | 3 | ✓ | 클라이언트 |
-| VKORG | VKORG | 4 | ✓ | 영업 조직 |
-| MATNR | MATNR | 18 | ✓ | 자재 번호 |
-| KUNNR | KUNNR | 10 | ✓ | 고객 코드 |
-| SPART | SPART | 2 | ✓ | 제품군 |
-| MATKL | MATKL | 9 | ✓ | 자재 그룹 |
-| GJAHR | GJAHR | 4 | ✓ | 회계 연도 |
-| SPMON | SPMON | 6 | ✓ | 기간(YYYYMM) |
-| WAERS | WAERS | 5 | | 통화 |
-| ORD_QTY | MENGE | 13,3 | | 오더 수량 |
-| DLV_QTY | MENGE | 13,3 | | 납품 수량 |
-| BIL_QTY | MENGE | 13,3 | | 청구 수량 |
-| NET_AMT | WERTV8 | 15,2 | | 순매출금액 |
-| DISC_AMT | WERTV8 | 15,2 | | 할인금액 |
-| COST_AMT | WERTV8 | 15,2 | | 매출원가 |
-| MARGIN | WERTV8 | 15,2 | | 마진금액 |
-| PY_AMT | WERTV8 | 15,2 | | 전년동기 금액 |
-| ACHV_RATE | P | 7,2 | | 달성률(%) |
-| DLV_RATE | P | 7,2 | | 납품율(%) |
-| BIL_RATE | P | 7,2 | | 청구율(%) |
-| MARGIN_RATE | P | 7,2 | | 마진율(%) |
-| ERDAT | DATS | 8 | | 생성일 |
-| ERNAM | ERNAM | 12 | | 생성자 |
-| UPDAT | DATS | 8 | | 수정일 |
-
-### 2-2. ZSDSI_ITEM (Sell-In 상세 아이템)
+### 2-1. ZSDT_SELLIN (Sell-In 실적 단일 테이블)
 
 | 필드명 | 타입 | 길이 | 키 | 설명 |
 |--------|------|------|----|------|
@@ -93,46 +67,30 @@ SAP Standard
 | MATKL | MATKL | 9 | | 자재 그룹 |
 | GJAHR | GJAHR | 4 | | 회계 연도 |
 | SPMON | SPMON | 6 | | 기간(YYYYMM) |
-| WAERS | WAERS | 5 | | 통화 |
+| AUDAT | DATS | 8 | | 오더 생성일 |
+| WAERS | WAERS | 5 | | 통화(로컬환산) |
 | ORD_QTY | MENGE | 13,3 | | 오더 수량 |
 | DLV_QTY | MENGE | 13,3 | | 납품 수량 |
 | BIL_QTY | MENGE | 13,3 | | 청구 수량 |
-| NETWR | WERTV8 | 15,2 | | 순액(오더통화) |
+| DLV_RATE | P | 7,2 | | 납품율(%) |
+| BIL_RATE | P | 7,2 | | 청구율(%) |
+| NETWR | WERTV8 | 15,2 | | 순매출(로컬통화) |
 | DISC_AMT | WERTV8 | 15,2 | | 할인금액 |
 | COGS | WERTV8 | 15,2 | | 매출원가(MBEW) |
 | MARGIN | WERTV8 | 15,2 | | 마진금액 |
 | DISC_RATE | P | 7,2 | | 할인율(%) |
 | MARGIN_RATE | P | 7,2 | | 마진율(%) |
+| PR00_KBETR | KBETR | 11,2 | | 정가 단가(PR00) |
+| MWST_RATE | P | 7,2 | | 세율(%) |
+| PY_AMT | WERTV8 | 15,2 | | 전년동기 금액 |
+| ACHV_RATE | P | 7,2 | | 달성율(%) |
 | VBRELN | VBELN | 10 | | 청구 문서번호 |
 | VBRELP | POSNR | 6 | | 청구 아이템 |
 | LIPS_VL | VBELN | 10 | | 납품 문서번호 |
-| PR00_KBETR | KBETR | 11,2 | | 정가 조건금액 |
-| MWST_RATE | P | 7,2 | | 세율(%) |
-| AUDAT | DATS | 8 | | 오더 생성일 |
 | ERDAT | DATS | 8 | | 레코드 생성일 |
-
-### 2-3. ZSDOO_HEADER (Open Order 집계 헤더)
-
-| 필드명 | 타입 | 길이 | 키 | 설명 |
-|--------|------|------|----|------|
-| MANDT | MANDT | 3 | ✓ | 클라이언트 |
-| VKORG | VKORG | 4 | ✓ | 영업 조직 |
-| KUNNR | KUNNR | 10 | ✓ | 고객 코드 |
-| SPART | SPART | 2 | ✓ | 제품군 |
-| MATKL | MATKL | 9 | ✓ | 자재 그룹 |
-| AUDAT_YM | SPMON | 6 | ✓ | 오더생성년월 |
-| WAERS | WAERS | 5 | | 통화 |
-| ORD_CNT | INT4 | 4 | | 오더 건수 |
-| ORD_AMT | WERTV8 | 15,2 | | 오더 금액 합계 |
-| OPEN_AMT | WERTV8 | 15,2 | | 미결 금액 합계 |
-| DLV_RATE | P | 7,2 | | 납품율(%) |
-| BIL_RATE | P | 7,2 | | 청구율(%) |
-| DELAY_CNT | INT4 | 4 | | 지연 건수 |
-| CREDIT_EXC | INT4 | 4 | | 신용초과 건수 |
-| ERDAT | DATS | 8 | | 생성일 |
 | ERNAM | ERNAM | 12 | | 생성자 |
 
-### 2-4. ZSDOO_ITEM (Open Order 상세 아이템)
+### 2-2. ZSDT_OPENORD (Open Order 진행 단일 테이블)
 
 | 필드명 | 타입 | 길이 | 키 | 설명 |
 |--------|------|------|----|------|
@@ -141,6 +99,7 @@ SAP Standard
 | POSNR | POSNR | 6 | ✓ | 오더 아이템 |
 | AUART | AUART | 4 | | 오더 유형 |
 | AUDAT | DATS | 8 | | 오더 생성일 |
+| AUDAT_YM | SPMON | 6 | | 오더 생성년월 |
 | VKORG | VKORG | 4 | | 영업 조직 |
 | KUNNR | KUNNR | 10 | | 고객 코드 |
 | MATNR | MATNR | 18 | | 자재 번호 |
@@ -150,13 +109,18 @@ SAP Standard
 | ORD_QTY | MENGE | 13,3 | | 오더 수량 |
 | CONF_QTY | MENGE | 13,3 | | 납품확정 수량 |
 | OPEN_QTY | MENGE | 13,3 | | 미납품 잔량 |
+| DLV_QTY | MENGE | 13,3 | | 실납품 수량 |
 | BIL_QTY | MENGE | 13,3 | | 청구 수량 |
+| DLV_RATE | P | 7,2 | | 납품율(%) |
+| BIL_RATE | P | 7,2 | | 청구율(%) |
 | ORD_AMT | WERTV8 | 15,2 | | 오더 금액 |
 | OPEN_AMT | WERTV8 | 15,2 | | 미결 금액 |
+| BIL_AMT | WERTV8 | 15,2 | | 청구 금액 |
 | EDATU | DATS | 8 | | 납품 예정일 |
 | WBS_DELAY | CHAR | 1 | | 지연여부(X) |
-| AGING_GRP | CHAR | 3 | | Aging 구간 |
-| DLV_STAT | CHAR | 1 | | 납품상태 |
+| DELAY_DAYS | INT4 | 4 | | 지연 일수 |
+| AGING_GRP | CHAR | 3 | | Aging 구간(030/060/090/90+) |
+| DLV_STAT | CHAR | 1 | | 납품상태(A/B/C) |
 | BIL_STAT | CHAR | 1 | | 청구상태 |
 | CREDIT_EXC | CHAR | 1 | | 신용초과여부 |
 | ERDAT | DATS | 8 | | 레코드 생성일 |
