@@ -105,7 +105,7 @@ TYPES:
 *----------------------------------------------------------------------*
 DATA:
   gt_openord    TYPE STANDARD TABLE OF ty_openord,
-  gt_vbak       TYPE STANDARD TABLE OF ty_openord, " 재사용 불가, 별도
+  gt_vbak_unused TYPE STANDARD TABLE OF ty_openord, " 미사용 - 삭제 예정
   gt_vbep       TYPE STANDARD TABLE OF ty_vbep_sel,
   gt_knkk       TYPE STANDARD TABLE OF ty_knkk_sel,
   gt_aging      TYPE STANDARD TABLE OF ty_aging_summary,
@@ -891,6 +891,7 @@ FORM f2_show_alv.
       program_error        = 1
       OTHERS               = 2.
 ENDFORM.
+
 
 
 
