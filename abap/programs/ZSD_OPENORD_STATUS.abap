@@ -144,7 +144,61 @@ TYPES:
     waers  TYPE waers,
     abgru  TYPE abgru,
     gbsta  TYPE gbsta,
-  END OF ty_vbap2.
+  END OF ty_vbap2,
+  BEGIN OF ty_vbfa_sel,
+    vbelv   TYPE vbfa-vbelv,
+    posnv   TYPE vbfa-posnv,
+    vbeln   TYPE vbfa-vbeln,
+    posnn   TYPE vbfa-posnn,
+    vbtyp_n TYPE vbfa-vbtyp_n,
+  END OF ty_vbfa_sel,
+
+  BEGIN OF ty_lips_sel,
+    vbeln TYPE lips-vbeln,
+    posnr TYPE lips-posnr,
+    vgbel TYPE lips-vgbel,
+    vgpos TYPE lips-vgpos,
+    lfimg TYPE lips-lfimg,
+    meins TYPE lips-meins,
+  END OF ty_lips_sel,
+
+  BEGIN OF ty_vbrp_sel,
+    vbeln TYPE vbrp-vbeln,
+    posnr TYPE vbrp-posnr,
+    aubel TYPE vbrp-aubel,
+    aupos TYPE vbrp-aupos,
+    fkimg TYPE vbrp-fkimg,
+    netwr TYPE vbrp-netwr,
+    mwsbp TYPE vbrp-mwsbp,
+  END OF ty_vbrp_sel,
+
+  BEGIN OF ty_konv_sel,
+    knumv    TYPE konv-knumv,
+    kposn    TYPE konv-kposn,
+    kschl    TYPE konv-kschl,
+    kbetr    TYPE konv-kbetr,
+    kwert    TYPE konv-kwert,
+    kkurs    TYPE konv-kkurs,
+    waers    TYPE konv-waers,
+    loevm_ko TYPE konv-loevm_ko,
+  END OF ty_konv_sel,
+
+  BEGIN OF ty_kna1_sel,
+    kunnr TYPE kna1-kunnr,
+    name1 TYPE kna1-name1,
+    ktokd TYPE kna1-ktokd,
+    land1 TYPE kna1-land1,
+    regio TYPE kna1-regio,
+  END OF ty_kna1_sel,
+
+  BEGIN OF ty_knvv_sel,
+    kunnr TYPE knvv-kunnr,
+    vkorg TYPE knvv-vkorg,
+    vtweg TYPE knvv-vtweg,
+    spart TYPE knvv-spart,
+    kdgrp TYPE knvv-kdgrp,
+    kalks TYPE knvv-kalks,
+  END OF ty_knvv_sel.
 
 DATA:
   gt_vbak2    TYPE STANDARD TABLE OF ty_vbak2,
@@ -839,3 +893,4 @@ FORM f2_show_alv.
       program_error        = 1
       OTHERS               = 2.
 ENDFORM.
+
