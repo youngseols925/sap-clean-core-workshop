@@ -122,7 +122,6 @@ TYPES:
     vtweg TYPE vtweg,
     spart TYPE spart,
     kunnr TYPE kunnr,
-    waerk TYPE c LENGTH 5,
     netwr TYPE p LENGTH 8 DECIMALS 2,
     knumv TYPE knumv,
   END OF ty_vbak2,
@@ -292,7 +291,7 @@ FORM f2_get_vbak.
   REFRESH gt_vbak2.
 
   " 오더 상태: 'C'=완료 제외, ' '=미처리, 'A'=부분처리만
-  SELECT vbeln erdat audat auart vkorg vtweg spart kunnr netwr waerk knumv
+  SELECT vbeln erdat audat auart vkorg vtweg spart kunnr netwr knumv
     INTO TABLE gt_vbak2
     FROM vbak
     WHERE audat IN s_audat
@@ -546,7 +545,7 @@ FORM f2_merge_data.
       gs_openord-matkl     = ls_vbap-matkl.
       gs_openord-meins     = ls_vbap-meins.
       gs_openord-vrkme     = ls_vbap-vrkme.
-      gs_openord-waers     = ls_vbak-waerk.
+      gs_openord-waers     = 'KRW'.  " 기본 통화
       gs_openord-ord_qty   = ls_vbap-kwmeng.
 
       " ── 경과일수 및 Aging 구간 계산 ──────────────────────
@@ -762,7 +761,6 @@ FORM f2_save_ztable.
   " 단일 테이블 저장 (아이템 단위)
   LOOP AT gt_openord INTO gs_openord.
     CLEAR ls_openord_db.
-    ls_openord_db-mandt       = sy-mandt.
     ls_openord_db-vbeln       = gs_openord-vbeln.
     ls_openord_db-posnr       = gs_openord-posnr.
     ls_openord_db-auart       = gs_openord-auart.
@@ -791,8 +789,6 @@ FORM f2_save_ztable.
     ls_openord_db-dlv_stat    = gs_openord-dlv_stat.
     ls_openord_db-bil_stat    = gs_openord-bil_stat.
     ls_openord_db-credit_exc  = gs_openord-credit_exc.
-    ls_openord_db-erdat       = sy-datum.
-    ls_openord_db-ernam       = sy-uname.
     APPEND ls_openord_db TO lt_openord_db.
   ENDLOOP.
 
