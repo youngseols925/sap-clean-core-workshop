@@ -85,7 +85,6 @@ TYPES:
     klimk TYPE klimk,
     skfor TYPE skfor,
     ssobl TYPE ssobl,
-    uvall TYPE uvall,
   END OF ty_knkk_sel,
 
   " Aging 집계용
@@ -124,7 +123,6 @@ TYPES:
     spart TYPE spart,
     kunnr TYPE kunnr,
     gbstk TYPE gbstk,
-    waers TYPE waers,
     netwr TYPE netwr_ap,
     knumv TYPE knumv,
   END OF ty_vbak2,
@@ -134,7 +132,6 @@ TYPES:
     posnr  TYPE posnr_va,
     matnr  TYPE matnr,
     matkl  TYPE matkl,
-    mtart  TYPE mtart,
     arktx  TYPE arktx,
     meins  TYPE meins,
     vrkme  TYPE vrkme,
@@ -297,7 +294,7 @@ FORM f2_get_vbak.
   REFRESH gt_vbak2.
 
   " 오더 상태: 'C'=완료 제외, ' '=미처리, 'A'=부분처리만
-  SELECT vbeln erdat audat auart vkorg vtweg spart kunnr gbstk waers netwr knumv
+  SELECT vbeln erdat audat auart vkorg vtweg spart kunnr gbstk netwr knumv
     INTO TABLE gt_vbak2
     FROM vbak
     WHERE audat IN s_audat
@@ -328,7 +325,7 @@ FORM f2_get_vbap.
     APPEND ls_vbeln TO lt_vbeln.
   ENDLOOP.
 
-  SELECT vbeln posnr matnr matkl mtart arktx meins vrkme kwmeng netwr waers abgru gbsta
+  SELECT vbeln posnr matnr matkl arktx meins vrkme kwmeng netwr waers abgru gbsta
     INTO TABLE gt_vbap2
     FROM vbap
     WHERE vbeln IN lt_vbeln
@@ -509,7 +506,7 @@ FORM f2_get_knkk.
     ls_kunnr-low = ls_vbak-kunnr. COLLECT ls_kunnr INTO lt_kunnr.
   ENDLOOP.
 
-  SELECT kunnr kkber ctlpc klimk skfor ssobl uvall
+  SELECT kunnr kkber ctlpc klimk skfor ssobl
     INTO TABLE gt_knkk
     FROM knkk
     WHERE kunnr IN lt_kunnr
@@ -551,21 +548,23 @@ FORM f2_merge_data.
       gs_openord-matnr     = ls_vbap-matnr.
       gs_openord-arktx     = ls_vbap-arktx.
       gs_openord-matkl     = ls_vbap-matkl.
-      gs_openord-mtart     = ls_vbap-mtart.
       gs_openord-meins     = ls_vbap-meins.
       gs_openord-vrkme     = ls_vbap-vrkme.
-      gs_openord-waers     = ls_vbak-waers.
+      gs_openord-waers     = ls_vbap-waers.
       gs_openord-ord_qty   = ls_vbap-kwmeng.
       gs_openord-gbstk     = ls_vbak-gbstk.
 
       " ── 경과일수 및 Aging 구간 계산 ──────────────────────
       gs_openord-elapsed_days = sy-datum - ls_vbak-audat.
-      CASE gs_openord-elapsed_days.
-        WHEN 0 TO 30.     gs_openord-aging_grp = '030'.
-        WHEN 31 TO 60.    gs_openord-aging_grp = '060'.
-        WHEN 61 TO 90.    gs_openord-aging_grp = '090'.
-        WHEN OTHERS.      gs_openord-aging_grp = '90+'.
-      ENDCASE.
+      IF gs_openord-elapsed_days <= 30.
+        gs_openord-aging_grp = '030'.
+      ELSEIF gs_openord-elapsed_days <= 60.
+        gs_openord-aging_grp = '060'.
+      ELSEIF gs_openord-elapsed_days <= 90.
+        gs_openord-aging_grp = '090'.
+      ELSE.
+        gs_openord-aging_grp = '90+'.
+      ENDIF.
 
       " ── 고객 정보 ──────────────────────────────────────────
       READ TABLE gt_kna12 INTO DATA(ls_kna1) WITH KEY kunnr = ls_vbak-kunnr.
@@ -589,7 +588,7 @@ FORM f2_merge_data.
         gs_openord-skfor        = ls_knkk-skfor.
 
         " 신용 초과 여부: AR잔액 + 오픈오더 > 신용한도
-        DATA(lv_total_exposure) = ls_knkk-skfor + ls_knkk-ssobl + ls_knkk-uvall.
+        DATA(lv_total_exposure) = ls_knkk-skfor + ls_knkk-ssobl.
         IF lv_total_exposure > ls_knkk-klimk AND ls_knkk-klimk > 0.
           gs_openord-credit_exc = 'X'.
         ENDIF.
@@ -704,10 +703,11 @@ FORM f2_merge_data.
       IF gs_openord-credit_exc = 'X'.
         gs_openord-traffic = 'R'.   " 신용초과 → 적색
       ELSEIF gs_openord-wbs_delay = 'X'.
-        CASE gs_openord-delay_days.
-          WHEN 1 TO 7.   gs_openord-traffic = 'Y'.  " 1~7일 → 황색
-          WHEN OTHERS.   gs_openord-traffic = 'R'.  " 7일 초과 → 적색
-        ENDCASE.
+        IF gs_openord-delay_days <= 7.
+          gs_openord-traffic = 'Y'.  " 1~7일 → 황색
+        ELSE.
+          gs_openord-traffic = 'R'.  " 7일 초과 → 적색
+        ENDIF.
       ELSEIF gs_openord-aging_grp = '90+'.
         gs_openord-traffic = 'Y'.   " 90일 초과 오더 → 황색 경고
       ELSE.
