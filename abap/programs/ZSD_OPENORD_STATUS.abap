@@ -452,7 +452,7 @@ FORM f2_get_konv.
     INTO TABLE gt_konv2
     FROM konv
     WHERE knumv IN lt_knumv
-      AND kschl = 'PR00'
+      AND kschl = 'PR00'.
 ENDFORM.
 
 *----------------------------------------------------------------------*
@@ -891,6 +891,7 @@ FORM f2_show_alv.
       program_error        = 1
       OTHERS               = 2.
 ENDFORM.
+
 
 
 
