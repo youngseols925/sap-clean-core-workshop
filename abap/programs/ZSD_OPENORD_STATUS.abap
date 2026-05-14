@@ -751,8 +751,8 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM f2_save_ztable.
   DATA:
-    lt_openord_db TYPE STANDARD TABLE OF ty_openord,
-    ls_openord_db TYPE ty_openord.
+    lt_openord_db TYPE STANDARD TABLE OF zsdt_openord,
+    ls_openord_db TYPE zsdt_openord.
 
   " 기존 데이터 삭제
   IF p_delold = 'X'.
