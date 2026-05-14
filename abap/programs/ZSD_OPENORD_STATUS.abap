@@ -756,9 +756,9 @@ FORM f2_save_ztable.
 
   " 기존 데이터 삭제
   IF p_delold = 'X'.
-*   DELETE FROM zsdt_openord   " Z-Table 활성화 후 주석 해제
-*     WHERE vkorg IN s_vkorg
-*       AND audat IN s_audat.
+    DELETE FROM zsdt_openord
+      WHERE vkorg IN s_vkorg
+        AND audat IN s_audat.
   ENDIF.
 
   " 단일 테이블 저장 (아이템 단위)
@@ -795,7 +795,7 @@ FORM f2_save_ztable.
     APPEND ls_openord_db TO lt_openord_db.
   ENDLOOP.
 
-*  INSERT zsdt_openord FROM TABLE lt_openord_db.  " Z-Table 활성화 후 주석 해제
+  INSERT zsdt_openord FROM TABLE lt_openord_db.
   COMMIT WORK AND WAIT.
 
   gv_save_cnt = lines( lt_openord_db ).
