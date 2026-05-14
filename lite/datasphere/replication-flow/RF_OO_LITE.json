@@ -5,7 +5,7 @@
   "meta": {
     "technicalName": "RF_OO_LITE",
     "businessName": "Open Order Replication (Lite)",
-    "description": "2LIS_11_VAHDR + 2LIS_11_VAITM → Local Table"
+    "description": "2LIS_11_VAHDR + 2LIS_11_VAITM + 0CUSTOMER_ATTR → Local Tables"
   },
   "tasks": [
     {
@@ -18,7 +18,7 @@
       },
       "target": {
         "technicalName": "LT_OO_VAHDR",
-        "businessName": "Open Order Header (Lite)",
+        "businessName": "Open Order Header",
         "type": "local"
       },
       "loadType": "REPLICATE",
@@ -34,7 +34,23 @@
       },
       "target": {
         "technicalName": "LT_OO_VAITM",
-        "businessName": "Open Order Item (Lite)",
+        "businessName": "Open Order Item",
+        "type": "local"
+      },
+      "loadType": "REPLICATE",
+      "truncateOnDelta": false
+    },
+    {
+      "name": "0CUSTOMER_ATTR",
+      "source": {
+        "connectionId": "S4_HANA",
+        "connectionType": "ABAP",
+        "container": "/ODP_BW",
+        "objectName": "0CUSTOMER_ATTR"
+      },
+      "target": {
+        "technicalName": "LT_OO_CUST",
+        "businessName": "Customer Master",
         "type": "local"
       },
       "loadType": "REPLICATE",

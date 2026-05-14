@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "$schema": "https://api.sap.com/datasphere/schema/localtable",
+  "kind": "sap.dis.localtable",
+  "meta": {
+    "technicalName": "LT_OO_CUST",
+    "businessName": "Customer Master (Lite)",
+    "description": "RF 타겟 — 소스: 0CUSTOMER_ATTR (ODP /ODP_BW), KNA1 대응"
+  },
+  "columns": [
+    {
+      "name": "CUSTOMER",
+      "datatype": "String",
+      "label": "고객코드",
+      "length": 10,
+      "isKey": true
+    },
+    {
+      "name": "NAME",
+      "datatype": "String",
+      "label": "고객명",
+      "length": 35
+    },
+    {
+      "name": "ACCT_GRP",
+      "datatype": "String",
+      "label": "계정그룹",
+      "length": 4
+    },
+    {
+      "name": "COUNTRY",
+      "datatype": "String",
+      "label": "국가",
+      "length": 3
+    },
+    {
+      "name": "REGION",
+      "datatype": "String",
+      "label": "지역",
+      "length": 3
+    }
+  ]
+}

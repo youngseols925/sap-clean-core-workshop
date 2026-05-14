@@ -31,7 +31,7 @@
     },
     {
       "name": "AUDAT",
-      "label": "오더생성일",
+      "label": "오더일자",
       "semanticType": "ATTRIBUTE"
     },
     {
@@ -46,7 +46,7 @@
     },
     {
       "name": "VTWEG",
-      "label": "유통채널",
+      "label": "유통경로",
       "semanticType": "ATTRIBUTE"
     },
     {
@@ -57,6 +57,16 @@
     {
       "name": "KUNNR",
       "label": "고객코드",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "KUNNR_NAME",
+      "label": "고객명",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "LAND1",
+      "label": "국가",
       "semanticType": "ATTRIBUTE"
     },
     {
@@ -80,7 +90,12 @@
       "semanticType": "ATTRIBUTE"
     },
     {
-      "name": "WAERK",
+      "name": "VRKME",
+      "label": "판매단위",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "WAERS",
       "label": "통화",
       "semanticType": "ATTRIBUTE"
     },

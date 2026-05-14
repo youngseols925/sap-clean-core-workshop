@@ -5,7 +5,7 @@
   "meta": {
     "technicalName": "TT_OO_LITE",
     "businessName": "Open Order Target (Lite)",
-    "description": "TF_OO_LITE 결과 저장 — JOIN + Aging 계산 포함"
+    "description": "TF_OO_LITE 결과 — 3-way JOIN + Aging 계산 완료"
   },
   "columns": [
     {
@@ -31,12 +31,12 @@
     {
       "name": "AUDAT",
       "datatype": "Date",
-      "label": "오더생성일"
+      "label": "오더일자"
     },
     {
       "name": "AUDAT_YM",
       "datatype": "String",
-      "label": "오더생성년월(YYYYMM)",
+      "label": "오더생성년월",
       "length": 6
     },
     {
@@ -48,7 +48,7 @@
     {
       "name": "VTWEG",
       "datatype": "String",
-      "label": "유통채널",
+      "label": "유통경로",
       "length": 2
     },
     {
@@ -62,6 +62,18 @@
       "datatype": "String",
       "label": "고객코드",
       "length": 10
+    },
+    {
+      "name": "KUNNR_NAME",
+      "datatype": "String",
+      "label": "고객명",
+      "length": 35
+    },
+    {
+      "name": "LAND1",
+      "datatype": "String",
+      "label": "국가",
+      "length": 3
     },
     {
       "name": "MATNR",
@@ -88,7 +100,13 @@
       "length": 3
     },
     {
-      "name": "WAERK",
+      "name": "VRKME",
+      "datatype": "String",
+      "label": "판매단위",
+      "length": 3
+    },
+    {
+      "name": "WAERS",
       "datatype": "String",
       "label": "통화",
       "length": 5

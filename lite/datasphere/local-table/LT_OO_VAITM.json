@@ -5,56 +5,69 @@
   "meta": {
     "technicalName": "LT_OO_VAITM",
     "businessName": "Open Order Item (Lite)",
-    "description": "2LIS_11_VAITM 복제 Local Table — RF_OO_LITE 타겟"
+    "description": "RF 타겟 — 소스: 2LIS_11_VAITM (ODP /ODP_BW)"
   },
   "columns": [
     {
-      "name": "VBELN",
+      "name": "DOC_NUMBER",
       "datatype": "String",
       "label": "판매오더번호",
       "length": 10,
       "isKey": true
     },
     {
-      "name": "POSNR",
+      "name": "S_ORD_ITEM",
       "datatype": "String",
       "label": "오더아이템",
       "length": 6,
       "isKey": true
     },
     {
-      "name": "MATNR",
+      "name": "MATERIAL",
       "datatype": "String",
       "label": "자재번호",
       "length": 18
     },
     {
-      "name": "MATKL",
+      "name": "MATL_GROUP",
       "datatype": "String",
       "label": "자재그룹",
       "length": 9
     },
     {
-      "name": "ARKTX",
+      "name": "SHORT_TEXT",
       "datatype": "String",
       "label": "자재설명",
       "length": 40
     },
     {
-      "name": "MEINS",
+      "name": "BASE_UOM",
       "datatype": "String",
       "label": "기본단위",
       "length": 3
     },
     {
-      "name": "KWMENG",
+      "name": "SALES_UOM",
+      "datatype": "String",
+      "label": "판매단위",
+      "length": 3
+    },
+    {
+      "name": "ORD_QTY",
       "datatype": "Decimal",
       "label": "오더수량",
       "length": 13,
       "scale": 3
     },
     {
-      "name": "ABGRU",
+      "name": "NET_VALUE",
+      "datatype": "Decimal",
+      "label": "아이템금액",
+      "length": 15,
+      "scale": 2
+    },
+    {
+      "name": "REJ_REASON",
       "datatype": "String",
       "label": "거부이유",
       "length": 2

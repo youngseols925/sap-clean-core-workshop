@@ -5,63 +5,74 @@
   "meta": {
     "technicalName": "LT_OO_VAHDR",
     "businessName": "Open Order Header (Lite)",
-    "description": "2LIS_11_VAHDR 복제 Local Table — RF_OO_LITE 타겟"
+    "description": "RF 타겟 — 소스: 2LIS_11_VAHDR (ODP /ODP_BW)"
   },
   "columns": [
     {
-      "name": "VBELN",
+      "name": "DOC_NUMBER",
       "datatype": "String",
       "label": "판매오더번호",
       "length": 10,
       "isKey": true
     },
     {
-      "name": "AUDAT",
+      "name": "CREAT_DATE",
       "datatype": "Date",
       "label": "오더생성일"
     },
     {
-      "name": "AUART",
+      "name": "AUDAT",
+      "datatype": "Date",
+      "label": "오더일자"
+    },
+    {
+      "name": "DOC_TYPE",
       "datatype": "String",
       "label": "오더유형",
       "length": 4
     },
     {
-      "name": "VKORG",
+      "name": "SALES_ORG",
       "datatype": "String",
       "label": "영업조직",
       "length": 4
     },
     {
-      "name": "VTWEG",
+      "name": "DISTR_CHAN",
       "datatype": "String",
-      "label": "유통채널",
+      "label": "유통경로",
       "length": 2
     },
     {
-      "name": "SPART",
+      "name": "DIVISION",
       "datatype": "String",
       "label": "제품군",
       "length": 2
     },
     {
-      "name": "KUNNR",
+      "name": "SOLD_TO",
       "datatype": "String",
-      "label": "고객코드",
+      "label": "판매처고객",
       "length": 10
     },
     {
-      "name": "NETWR",
+      "name": "NET_VALUE",
       "datatype": "Decimal",
       "label": "오더금액",
       "length": 15,
       "scale": 2
     },
     {
-      "name": "WAERK",
+      "name": "CURRENCY",
       "datatype": "String",
       "label": "통화",
       "length": 5
+    },
+    {
+      "name": "VBTYP_N",
+      "datatype": "String",
+      "label": "문서범주",
+      "length": 1
     }
   ]
 }
