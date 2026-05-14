@@ -780,8 +780,6 @@ FORM f2_save_ztable.
     ls_openord_db-open_qty    = gs_openord-open_qty.
     ls_openord_db-dlv_qty     = gs_openord-dlv_qty.
     ls_openord_db-bil_qty     = gs_openord-bil_qty.
-    ls_openord_db-dlv_rate    = gs_openord-dlv_rate.
-    ls_openord_db-bil_rate    = gs_openord-bil_rate.
     ls_openord_db-ord_amt     = gs_openord-ord_amt.
     ls_openord_db-open_amt    = gs_openord-open_amt.
     ls_openord_db-bil_amt     = gs_openord-bil_amt.
