@@ -180,7 +180,7 @@ TYPES:
     kwert    TYPE konv-kwert,
     kkurs    TYPE konv-kkurs,
     waers    TYPE konv-waers,
-    loevm_ko TYPE konv-loevm_ko,
+    loekz    TYPE konv-loekz,
   END OF ty_konv_sel,
 
   BEGIN OF ty_kna1_sel,
@@ -449,12 +449,12 @@ FORM f2_get_konv.
 
   CHECK lt_knumv IS NOT INITIAL.
 
-  SELECT knumv kposn kschl kbetr kwert kkurs waers loevm_ko
+  SELECT knumv kposn kschl kbetr kwert kkurs waers loekz
     INTO TABLE gt_konv2
     FROM konv
     WHERE knumv IN lt_knumv
       AND kschl = 'PR00'
-      AND loevm_ko = ' '.
+      AND loekz    = ' '.
 ENDFORM.
 
 *----------------------------------------------------------------------*
@@ -893,4 +893,6 @@ FORM f2_show_alv.
       program_error        = 1
       OTHERS               = 2.
 ENDFORM.
+
+
 
