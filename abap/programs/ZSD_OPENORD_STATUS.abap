@@ -236,7 +236,7 @@ DATA:
 *----------------------------------------------------------------------*
 * Selection Screen
 *----------------------------------------------------------------------*
-SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE 'Search Criteria'.
+SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE 'CRITERIA'.
   SELECT-OPTIONS:
     s_audat  FOR sy-datum   OBLIGATORY,    " 오더 생성일
     s_vkorg  FOR sy-mandt,                " 영업 조직
@@ -248,7 +248,7 @@ SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE 'Search Criteria'.
     s_auart  FOR sy-mandt.                " 오더 유형
 SELECTION-SCREEN END OF BLOCK b1.
 
-SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE 'Status Filter'.
+SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE 'STATUS'.
   PARAMETERS:
     p_open   TYPE char1 AS CHECKBOX DEFAULT 'X',   " 미납품 포함 (납품 전혀 없는 건)
     p_part   TYPE char1 AS CHECKBOX DEFAULT 'X',   " 부분납품 포함 (일부 납품된 건)
@@ -257,7 +257,7 @@ SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE 'Status Filter'.
     p_kkber  TYPE kkber                DEFAULT '1000'.   " 신용관리영역 코드
 SELECTION-SCREEN END OF BLOCK b2.
 
-SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE 'Save to Z-Table'.
+SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE 'SAVE'.
   PARAMETERS:
     p_save   TYPE xfeld AS CHECKBOX,               " Z-Table 저장 실행 여부
     p_delold TYPE xfeld AS CHECKBOX DEFAULT 'X',   " 저장 전 기존 데이터 삭제
