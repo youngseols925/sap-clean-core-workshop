@@ -8,6 +8,26 @@ REPORT zsd_openord_status
   LINE-COUNT 65
   MESSAGE-ID zmsd.
 
+
+*----------------------------------------------------------------------*
+* Selection Text 설명 (SE38 > Goto > Text Elements > Selection Texts)
+*----------------------------------------------------------------------*
+* S_AUDAT  : 오더 생성일
+* S_VKORG  : 영업 조직
+* S_VTWEG  : 유통 경로
+* S_SPART  : 제품군 (Division)
+* S_KUNNR  : 고객 코드
+* S_MATNR  : 자재 번호
+* S_MATKL  : 자재 그룹
+* S_AUART  : 오더 유형 (Sales Doc. Type)
+* P_OPEN   : 미납품 포함
+* P_PART   : 부분납품 포함
+* P_DELAY  : 납품 지연 건만
+* P_CREDIT : 신용 한도 초과 건만
+* P_KKBER  : 신용관리영역
+* P_SAVE   : Z-Table 저장
+* P_DELOLD : 기존 데이터 삭제 후 저장
+*----------------------------------------------------------------------*
 *----------------------------------------------------------------------*
 * 타입 정의
 *----------------------------------------------------------------------*
@@ -216,31 +236,31 @@ DATA:
 *----------------------------------------------------------------------*
 * Selection Screen
 *----------------------------------------------------------------------*
-SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.
+SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE '조회 조건'.
   SELECT-OPTIONS:
     s_audat  FOR sy-datum   OBLIGATORY,    " 오더 생성일
-    s_vkorg  FOR sy-mandt,                            " 영업 조직
-    s_vtweg  FOR sy-mandt,                            " 유통 경로
-    s_spart  FOR sy-mandt,                            " 제품군
-    s_kunnr  FOR sy-mandt,                            " 고객
-    s_matnr  FOR sy-mandt,                            " 자재
-    s_matkl  FOR sy-mandt,                            " 자재 그룹
-    s_auart  FOR sy-mandt.                            " 오더 유형
+    s_vkorg  FOR sy-mandt,                " 영업 조직
+    s_vtweg  FOR sy-mandt,                " 유통 경로
+    s_spart  FOR sy-mandt,                " 제품군
+    s_kunnr  FOR sy-mandt,                " 고객 코드
+    s_matnr  FOR sy-mandt,                " 자재 번호
+    s_matkl  FOR sy-mandt,                " 자재 그룹
+    s_auart  FOR sy-mandt.                " 오더 유형
 SELECTION-SCREEN END OF BLOCK b1.
 
-SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-002.
+SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE '상태 필터'.
   PARAMETERS:
-    p_open   TYPE char1 AS CHECKBOX DEFAULT 'X', " 미납품 포함
-    p_part   TYPE char1 AS CHECKBOX DEFAULT 'X', " 부분납품 포함
-    p_delay  TYPE char1 AS CHECKBOX DEFAULT ' ', " 지연 건만 조회
-    p_credit TYPE char1 AS CHECKBOX DEFAULT ' ', " 신용초과 건만
-    p_kkber  TYPE kkber                DEFAULT '1000'.      " 신용관리영역
+    p_open   TYPE char1 AS CHECKBOX DEFAULT 'X',   " 미납품 포함 (납품 전혀 없는 건)
+    p_part   TYPE char1 AS CHECKBOX DEFAULT 'X',   " 부분납품 포함 (일부 납품된 건)
+    p_delay  TYPE char1 AS CHECKBOX DEFAULT ' ',   " 납품 지연 건만 조회
+    p_credit TYPE char1 AS CHECKBOX DEFAULT ' ',   " 신용 한도 초과 건만 조회
+    p_kkber  TYPE kkber                DEFAULT '1000'.   " 신용관리영역 코드
 SELECTION-SCREEN END OF BLOCK b2.
 
-SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE TEXT-003.
+SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE 'Z-Table 저장'.
   PARAMETERS:
-    p_save   TYPE xfeld AS CHECKBOX,
-    p_delold TYPE xfeld AS CHECKBOX DEFAULT 'X'.
+    p_save   TYPE xfeld AS CHECKBOX,               " Z-Table 저장 실행 여부
+    p_delold TYPE xfeld AS CHECKBOX DEFAULT 'X'.   " 저장 전 기존 데이터 삭제
 SELECTION-SCREEN END OF BLOCK b3.
 
 *----------------------------------------------------------------------*
