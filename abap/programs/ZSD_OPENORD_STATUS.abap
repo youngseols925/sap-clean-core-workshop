@@ -67,8 +67,8 @@ TYPES:
     open_qty     TYPE menge_d,     " 미납품 잔량
     dlv_qty      TYPE menge_d,     " 실납품 수량 (LIPS)
     bil_qty      TYPE menge_d,     " 청구 수량
-    dlv_rate     TYPE p DECIMALS 2," 납품율(%)
-    bil_rate     TYPE p DECIMALS 2," 청구율(%)
+    dlv_rate     TYPE numc3,         " 납품율(% 정수)
+    bil_rate     TYPE numc3,         " 청구율(% 정수)
     " ── 금액 ────────────────────────────────────────────────────
     waers        TYPE waers,       " 오더 통화
     ord_amt      TYPE wertv8,      " 오더 금액
@@ -236,7 +236,7 @@ DATA:
 *----------------------------------------------------------------------*
 * Selection Screen
 *----------------------------------------------------------------------*
-SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.
+SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE 'Search Criteria'.
   SELECT-OPTIONS:
     s_audat  FOR sy-datum   OBLIGATORY,    " 오더 생성일
     s_vkorg  FOR sy-mandt,                " 영업 조직
@@ -248,7 +248,7 @@ SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.
     s_auart  FOR sy-mandt.                " 오더 유형
 SELECTION-SCREEN END OF BLOCK b1.
 
-SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-002.
+SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE 'Status Filter'.
   PARAMETERS:
     p_open   TYPE char1 AS CHECKBOX DEFAULT 'X',   " 미납품 포함 (납품 전혀 없는 건)
     p_part   TYPE char1 AS CHECKBOX DEFAULT 'X',   " 부분납품 포함 (일부 납품된 건)
@@ -257,20 +257,12 @@ SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-002.
     p_kkber  TYPE kkber                DEFAULT '1000'.   " 신용관리영역 코드
 SELECTION-SCREEN END OF BLOCK b2.
 
-SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE TEXT-003.
+SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE 'Save to Z-Table'.
   PARAMETERS:
     p_save   TYPE xfeld AS CHECKBOX,               " Z-Table 저장 실행 여부
     p_delold TYPE xfeld AS CHECKBOX DEFAULT 'X',   " 저장 전 기존 데이터 삭제
     p_nodisp TYPE xfeld AS CHECKBOX DEFAULT ' '.   " 화면 출력 없이 저장만 (Batch 모드)
 SELECTION-SCREEN END OF BLOCK b3.
-
-*----------------------------------------------------------------------*
-* INITIALIZATION
-*----------------------------------------------------------------------*
-INITIALIZATION.
-  TEXT-001 = 'Search Criteria'.
-  TEXT-002 = 'Status Filter'.
-  TEXT-003 = 'Save to Z-Table'.
 
 *----------------------------------------------------------------------*
 * AT SELECTION-SCREEN
@@ -698,8 +690,8 @@ FORM f2_merge_data.
 
       " ── 납품율 / 청구율 ────────────────────────────────────
       IF gs_openord-ord_qty > 0.
-        gs_openord-dlv_rate = ( gs_openord-dlv_qty / gs_openord-ord_qty ) * 100.
-        gs_openord-bil_rate = ( gs_openord-bil_qty / gs_openord-ord_qty ) * 100.
+        gs_openord-dlv_rate = trunc( ( gs_openord-dlv_qty / gs_openord-ord_qty ) * 100 ).
+        gs_openord-bil_rate = trunc( ( gs_openord-bil_qty / gs_openord-ord_qty ) * 100 ).
       ENDIF.
 
       " ── 납품 상태 코드 ─────────────────────────────────────
