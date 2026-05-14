@@ -122,8 +122,8 @@ TYPES:
     vtweg TYPE vtweg,
     spart TYPE spart,
     kunnr TYPE kunnr,
-    waerk TYPE waerk,
-    netwr TYPE netwr_ap,
+    waerk TYPE c LENGTH 5,
+    netwr TYPE p LENGTH 8 DECIMALS 2,
     knumv TYPE knumv,
   END OF ty_vbak2,
 
@@ -136,8 +136,7 @@ TYPES:
     meins  TYPE meins,
     vrkme  TYPE vrkme,
     kwmeng TYPE kwmeng,
-    netwr  TYPE netwr_ap,
-    waers  TYPE waers,
+    netwr  TYPE p LENGTH 8 DECIMALS 2,
     abgru  TYPE abgru,
   END OF ty_vbap2,
   BEGIN OF ty_vbfa_sel,
@@ -323,7 +322,7 @@ FORM f2_get_vbap.
     APPEND ls_vbeln TO lt_vbeln.
   ENDLOOP.
 
-  SELECT vbeln posnr matnr matkl arktx meins vrkme kwmeng netwr waers abgru
+  SELECT vbeln posnr matnr matkl arktx meins vrkme kwmeng netwr abgru
     INTO TABLE gt_vbap2
     FROM vbap
     WHERE vbeln IN lt_vbeln
@@ -750,14 +749,14 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM f2_save_ztable.
   DATA:
-    lt_openord_db TYPE STANDARD TABLE OF zsdt_openord,
-    ls_openord_db TYPE zsdt_openord.
+    lt_openord_db TYPE STANDARD TABLE OF ty_openord,
+    ls_openord_db TYPE ty_openord.
 
   " 기존 데이터 삭제
   IF p_delold = 'X'.
-    DELETE FROM zsdt_openord
-      WHERE vkorg IN s_vkorg
-        AND audat IN s_audat.
+*   DELETE FROM zsdt_openord   " Z-Table 활성화 후 주석 해제
+*     WHERE vkorg IN s_vkorg
+*       AND audat IN s_audat.
   ENDIF.
 
   " 단일 테이블 저장 (아이템 단위)
@@ -797,7 +796,7 @@ FORM f2_save_ztable.
     APPEND ls_openord_db TO lt_openord_db.
   ENDLOOP.
 
-  INSERT zsdt_openord FROM TABLE lt_openord_db.
+*  INSERT zsdt_openord FROM TABLE lt_openord_db.  " Z-Table 활성화 후 주석 해제
   COMMIT WORK AND WAIT.
 
   gv_save_cnt = lines( lt_openord_db ).
