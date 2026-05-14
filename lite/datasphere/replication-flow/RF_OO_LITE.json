@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "$schema": "https://api.sap.com/datasphere/schema/replicationflow",
+  "kind": "sap.dis.replicationflow",
+  "meta": {
+    "technicalName": "RF_OO_LITE",
+    "businessName": "Open Order Replication (Lite)",
+    "description": "2LIS_11_VAHDR + 2LIS_11_VAITM → Local Table"
+  },
+  "tasks": [
+    {
+      "name": "2LIS_11_VAHDR",
+      "source": {
+        "connectionId": "S4_HANA",
+        "connectionType": "ABAP",
+        "container": "/ODP_BW",
+        "objectName": "2LIS_11_VAHDR"
+      },
+      "target": {
+        "technicalName": "LT_OO_VAHDR",
+        "businessName": "Open Order Header (Lite)",
+        "type": "local"
+      },
+      "loadType": "REPLICATE",
+      "truncateOnDelta": false
+    },
+    {
+      "name": "2LIS_11_VAITM",
+      "source": {
+        "connectionId": "S4_HANA",
+        "connectionType": "ABAP",
+        "container": "/ODP_BW",
+        "objectName": "2LIS_11_VAITM"
+      },
+      "target": {
+        "technicalName": "LT_OO_VAITM",
+        "businessName": "Open Order Item (Lite)",
+        "type": "local"
+      },
+      "loadType": "REPLICATE",
+      "truncateOnDelta": false
+    }
+  ]
+}

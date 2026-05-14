@@ -1,0 +1,199 @@
+{
+  "version": 1,
+  "$schema": "https://api.sap.com/datasphere/schema/analyticmodel",
+  "kind": "sap.dis.analyticmodel",
+  "meta": {
+    "technicalName": "AM_OO_LITE",
+    "businessName": "Open Order AM (Lite)",
+    "description": "1-Day 워크샵용 경량 Analytic Model — BASE 지표 2 + RESTRICTION 4"
+  },
+  "factSources": [
+    {
+      "technicalName": "V_OO_LITE_F",
+      "alias": "V_OO_LITE_F"
+    }
+  ],
+  "attributes": [
+    {
+      "technicalName": "VKORG",
+      "label": "영업조직"
+    },
+    {
+      "technicalName": "VTWEG",
+      "label": "유통채널"
+    },
+    {
+      "technicalName": "SPART",
+      "label": "제품군"
+    },
+    {
+      "technicalName": "KUNNR",
+      "label": "고객코드"
+    },
+    {
+      "technicalName": "MATNR",
+      "label": "자재번호"
+    },
+    {
+      "technicalName": "MATKL",
+      "label": "자재그룹"
+    },
+    {
+      "technicalName": "ARKTX",
+      "label": "자재설명"
+    },
+    {
+      "technicalName": "MEINS",
+      "label": "기본단위"
+    },
+    {
+      "technicalName": "WAERK",
+      "label": "통화"
+    },
+    {
+      "technicalName": "AUART",
+      "label": "오더유형"
+    },
+    {
+      "technicalName": "AUDAT",
+      "label": "오더생성일"
+    },
+    {
+      "technicalName": "AUDAT_YM",
+      "label": "오더생성년월"
+    },
+    {
+      "technicalName": "AGING_GRP",
+      "label": "Aging구간"
+    },
+    {
+      "technicalName": "ELAPSED_DAYS",
+      "label": "경과일수"
+    }
+  ],
+  "measures": [
+    {
+      "technicalName": "ORD_AMT",
+      "label": "오더금액",
+      "measureType": "BASE",
+      "factSourceRef": "V_OO_LITE_F",
+      "factSourceMeasureRef": "ORD_AMT"
+    },
+    {
+      "technicalName": "ORD_QTY",
+      "label": "오더수량",
+      "measureType": "BASE",
+      "factSourceRef": "V_OO_LITE_F",
+      "factSourceMeasureRef": "ORD_QTY"
+    },
+    {
+      "technicalName": "CURR_MONTH_AMT",
+      "label": "당월 오더금액",
+      "measureType": "RESTRICTED",
+      "baseMeasureRef": "ORD_AMT",
+      "restrictedBy": [
+        {
+          "dimensionRef": "AUDAT_YM",
+          "operator": "EQ",
+          "variableRef": "RV_CURR_MONTH"
+        }
+      ]
+    },
+    {
+      "technicalName": "PREV_MONTH_AMT",
+      "label": "전월 오더금액",
+      "measureType": "RESTRICTED",
+      "baseMeasureRef": "ORD_AMT",
+      "restrictedBy": [
+        {
+          "dimensionRef": "AUDAT_YM",
+          "operator": "EQ",
+          "variableRef": "RV_PREVIOUS_MONTH"
+        }
+      ]
+    },
+    {
+      "technicalName": "CURR_YTD_AMT",
+      "label": "당년누계 오더금액",
+      "measureType": "RESTRICTED",
+      "baseMeasureRef": "ORD_AMT",
+      "restrictedBy": [
+        {
+          "dimensionRef": "AUDAT_YM",
+          "operator": "BT",
+          "variableRef": "RV_CURR_YEAR_JAN",
+          "variableRef2": "RV_CURR_MONTH"
+        }
+      ]
+    },
+    {
+      "technicalName": "PREV_YTD_AMT",
+      "label": "전년누계 오더금액",
+      "measureType": "RESTRICTED",
+      "baseMeasureRef": "ORD_AMT",
+      "restrictedBy": [
+        {
+          "dimensionRef": "AUDAT_YM",
+          "operator": "BT",
+          "variableRef": "RV_PREVIOUS_YEAR_JAN",
+          "variableRef2": "RV_PREVIOUS_YEAR_SAME_MONTH"
+        }
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "technicalName": "P_MONTH",
+      "label": "기준월 (YYYYMM)",
+      "type": "INPUT",
+      "mandatory": true,
+      "dataType": "String",
+      "length": 6
+    },
+    {
+      "technicalName": "RV_CURR_MONTH",
+      "label": "당월 (hidden)",
+      "type": "LOOKUP",
+      "hidden": true,
+      "lookupSource": "V_MONTH_COMPARISON",
+      "lookupMeasure": "CURRENT_MONTH",
+      "inputVariableRef": "P_MONTH"
+    },
+    {
+      "technicalName": "RV_PREVIOUS_MONTH",
+      "label": "전월 (hidden)",
+      "type": "LOOKUP",
+      "hidden": true,
+      "lookupSource": "V_MONTH_COMPARISON",
+      "lookupMeasure": "PREVIOUS_MONTH",
+      "inputVariableRef": "P_MONTH"
+    },
+    {
+      "technicalName": "RV_CURR_YEAR_JAN",
+      "label": "당년1월 (hidden)",
+      "type": "LOOKUP",
+      "hidden": true,
+      "lookupSource": "V_MONTH_COMPARISON",
+      "lookupMeasure": "CURRENT_YEAR_JAN",
+      "inputVariableRef": "P_MONTH"
+    },
+    {
+      "technicalName": "RV_PREVIOUS_YEAR_SAME_MONTH",
+      "label": "전년동월 (hidden)",
+      "type": "LOOKUP",
+      "hidden": true,
+      "lookupSource": "V_MONTH_COMPARISON",
+      "lookupMeasure": "PREVIOUS_YEAR_SAME_MONTH",
+      "inputVariableRef": "P_MONTH"
+    },
+    {
+      "technicalName": "RV_PREVIOUS_YEAR_JAN",
+      "label": "전년1월 (hidden)",
+      "type": "LOOKUP",
+      "hidden": true,
+      "lookupSource": "V_MONTH_COMPARISON",
+      "lookupMeasure": "PREVIOUS_YEAR_JAN",
+      "inputVariableRef": "P_MONTH"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "$schema": "https://api.sap.com/datasphere/schema/view",
+  "kind": "sap.dis.view",
+  "meta": {
+    "technicalName": "V_OO_LITE_F",
+    "businessName": "Open Order Fact View (Lite)",
+    "description": "TT_OO_LITE 기반 Fact View — AM_OO_LITE 소스"
+  },
+  "viewProperties": {
+    "semanticUsage": "ANALYTICAL_FACT"
+  },
+  "source": {
+    "technicalName": "TT_OO_LITE"
+  },
+  "elements": [
+    {
+      "name": "VBELN",
+      "label": "판매오더번호",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "POSNR",
+      "label": "오더아이템",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "AUART",
+      "label": "오더유형",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "AUDAT",
+      "label": "오더생성일",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "AUDAT_YM",
+      "label": "오더생성년월",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "VKORG",
+      "label": "영업조직",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "VTWEG",
+      "label": "유통채널",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "SPART",
+      "label": "제품군",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "KUNNR",
+      "label": "고객코드",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "MATNR",
+      "label": "자재번호",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "MATKL",
+      "label": "자재그룹",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "ARKTX",
+      "label": "자재설명",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "MEINS",
+      "label": "기본단위",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "WAERK",
+      "label": "통화",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "AGING_GRP",
+      "label": "Aging구간",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "ELAPSED_DAYS",
+      "label": "경과일수",
+      "semanticType": "ATTRIBUTE"
+    },
+    {
+      "name": "ORD_QTY",
+      "label": "오더수량",
+      "semanticType": "AMOUNT",
+      "aggregationBehavior": "SUM"
+    },
+    {
+      "name": "ORD_AMT",
+      "label": "오더금액",
+      "semanticType": "AMOUNT",
+      "aggregationBehavior": "SUM"
+    }
+  ],
+  "supportedCapabilities": [
+    "ANALYTICAL_FACT"
+  ]
+}

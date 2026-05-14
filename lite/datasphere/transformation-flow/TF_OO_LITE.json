@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "$schema": "https://api.sap.com/datasphere/schema/transformationflow",
+  "kind": "sap.dis.transformationflow",
+  "meta": {
+    "technicalName": "TF_OO_LITE",
+    "businessName": "Open Order Transformation (Lite)",
+    "description": "LT_OO_VAHDR + LT_OO_VAITM JOIN → Aging 계산 → TT_OO_LITE"
+  },
+  "target": {
+    "technicalName": "TT_OO_LITE",
+    "mode": "TRUNCATE"
+  },
+  "sql": "SELECT\n  H.VBELN,\n  I.POSNR,\n  H.AUART,\n  H.AUDAT,\n  LEFT(CAST(H.AUDAT AS VARCHAR), 6)            AS AUDAT_YM,\n  H.VKORG,\n  H.VTWEG,\n  H.SPART,\n  H.KUNNR,\n  I.MATNR,\n  I.MATKL,\n  I.ARKTX,\n  I.MEINS,\n  H.WAERK,\n  I.KWMENG                                     AS ORD_QTY,\n  H.NETWR                                      AS ORD_AMT,\n  DAYS_BETWEEN(H.AUDAT, CURRENT_DATE)          AS ELAPSED_DAYS,\n  CASE\n    WHEN DAYS_BETWEEN(H.AUDAT, CURRENT_DATE) <= 30  THEN '030'\n    WHEN DAYS_BETWEEN(H.AUDAT, CURRENT_DATE) <= 60  THEN '060'\n    WHEN DAYS_BETWEEN(H.AUDAT, CURRENT_DATE) <= 90  THEN '090'\n    ELSE '90+'\n  END                                          AS AGING_GRP\nFROM LT_OO_VAHDR H\nINNER JOIN LT_OO_VAITM I\n  ON H.VBELN = I.VBELN\nWHERE I.ABGRU = ''"
+}

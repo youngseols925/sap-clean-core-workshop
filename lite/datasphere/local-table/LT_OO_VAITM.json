@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "$schema": "https://api.sap.com/datasphere/schema/localtable",
+  "kind": "sap.dis.localtable",
+  "meta": {
+    "technicalName": "LT_OO_VAITM",
+    "businessName": "Open Order Item (Lite)",
+    "description": "2LIS_11_VAITM 복제 Local Table — RF_OO_LITE 타겟"
+  },
+  "columns": [
+    {
+      "name": "VBELN",
+      "datatype": "String",
+      "label": "판매오더번호",
+      "length": 10,
+      "isKey": true
+    },
+    {
+      "name": "POSNR",
+      "datatype": "String",
+      "label": "오더아이템",
+      "length": 6,
+      "isKey": true
+    },
+    {
+      "name": "MATNR",
+      "datatype": "String",
+      "label": "자재번호",
+      "length": 18
+    },
+    {
+      "name": "MATKL",
+      "datatype": "String",
+      "label": "자재그룹",
+      "length": 9
+    },
+    {
+      "name": "ARKTX",
+      "datatype": "String",
+      "label": "자재설명",
+      "length": 40
+    },
+    {
+      "name": "MEINS",
+      "datatype": "String",
+      "label": "기본단위",
+      "length": 3
+    },
+    {
+      "name": "KWMENG",
+      "datatype": "Decimal",
+      "label": "오더수량",
+      "length": 13,
+      "scale": 3
+    },
+    {
+      "name": "ABGRU",
+      "datatype": "String",
+      "label": "거부이유",
+      "length": 2
+    }
+  ]
+}

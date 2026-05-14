@@ -1,0 +1,122 @@
+{
+  "version": 1,
+  "$schema": "https://api.sap.com/datasphere/schema/localtable",
+  "kind": "sap.dis.localtable",
+  "meta": {
+    "technicalName": "TT_OO_LITE",
+    "businessName": "Open Order Target (Lite)",
+    "description": "TF_OO_LITE 결과 저장 — JOIN + Aging 계산 포함"
+  },
+  "columns": [
+    {
+      "name": "VBELN",
+      "datatype": "String",
+      "label": "판매오더번호",
+      "length": 10,
+      "isKey": true
+    },
+    {
+      "name": "POSNR",
+      "datatype": "String",
+      "label": "오더아이템",
+      "length": 6,
+      "isKey": true
+    },
+    {
+      "name": "AUART",
+      "datatype": "String",
+      "label": "오더유형",
+      "length": 4
+    },
+    {
+      "name": "AUDAT",
+      "datatype": "Date",
+      "label": "오더생성일"
+    },
+    {
+      "name": "AUDAT_YM",
+      "datatype": "String",
+      "label": "오더생성년월(YYYYMM)",
+      "length": 6
+    },
+    {
+      "name": "VKORG",
+      "datatype": "String",
+      "label": "영업조직",
+      "length": 4
+    },
+    {
+      "name": "VTWEG",
+      "datatype": "String",
+      "label": "유통채널",
+      "length": 2
+    },
+    {
+      "name": "SPART",
+      "datatype": "String",
+      "label": "제품군",
+      "length": 2
+    },
+    {
+      "name": "KUNNR",
+      "datatype": "String",
+      "label": "고객코드",
+      "length": 10
+    },
+    {
+      "name": "MATNR",
+      "datatype": "String",
+      "label": "자재번호",
+      "length": 18
+    },
+    {
+      "name": "MATKL",
+      "datatype": "String",
+      "label": "자재그룹",
+      "length": 9
+    },
+    {
+      "name": "ARKTX",
+      "datatype": "String",
+      "label": "자재설명",
+      "length": 40
+    },
+    {
+      "name": "MEINS",
+      "datatype": "String",
+      "label": "기본단위",
+      "length": 3
+    },
+    {
+      "name": "WAERK",
+      "datatype": "String",
+      "label": "통화",
+      "length": 5
+    },
+    {
+      "name": "ORD_QTY",
+      "datatype": "Decimal",
+      "label": "오더수량",
+      "length": 13,
+      "scale": 3
+    },
+    {
+      "name": "ORD_AMT",
+      "datatype": "Decimal",
+      "label": "오더금액",
+      "length": 15,
+      "scale": 2
+    },
+    {
+      "name": "ELAPSED_DAYS",
+      "datatype": "Integer",
+      "label": "경과일수"
+    },
+    {
+      "name": "AGING_GRP",
+      "datatype": "String",
+      "label": "Aging구간",
+      "length": 3
+    }
+  ]
+}
