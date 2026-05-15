@@ -61,14 +61,14 @@ Datasphere BW Ingestion Space
 
 ### Step 1 · Data Sharing Cockpit 접속
 
-[📸 스크린샷: Data Sharing Cockpit 메인 화면]
+![Data Sharing Cockpit 메인 화면](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_3_image03.png)
 
 - SAP BDC 메인 메뉴에서 **Data Sharing Cockpit** 선택
 - 기 생성된 Data Product 목록 확인
 
 ### Step 2 · Data Product 생성 방식 확인
 
-[📸 스크린샷: Data Product 상세 화면 — 소스 테이블 매핑]
+![Data Product 상세 화면 — 소스 테이블 매핑](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_3_image05.png)
 
 Data Product 생성 시 설정 항목:
 | 항목 | 예시값 |
