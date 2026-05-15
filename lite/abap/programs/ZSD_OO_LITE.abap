@@ -1,9 +1,9 @@
 *&---------------------------------------------------------------------*
 *& Report  ZSD_OO_LITE
 *& Open Order 진행현황 조회 (워크샵 경량화 버전)
-*& 목적: Clean Core 워크샵 AS-IS 시연 — 핵심 로직만 추려 1-Day 완주
-*& ※ 기준: ZSD_OPENORD_STATUS (Kai 디버깅 완료본) 기반으로
-*&         VBEP/VBFA/LIPS/VBRP/KONV/KNVV/KNKK 제거, VBAK+VBAP+KNA1만 유지
+*& 목적: Clean Core 워크샵 AS-IS 시연
+*&       VBAK + VBAP 만 사용 (KNA1/VBEP/VBFA/LIPS/VBRP/KONV 제거)
+*& 기반: ZSD_OPENORD_STATUS (Full 버전)
 *&---------------------------------------------------------------------*
 REPORT zsd_oo_lite
   LINE-SIZE 255
@@ -20,7 +20,7 @@ TYPES:
     posnr        TYPE posnr_va,    " 오더 아이템
     auart        TYPE auart,       " 오더 유형
     audat        TYPE audat,       " 오더 생성일
-    audat_ym     TYPE spmon,       " 오더 생성년월
+    audat_ym     TYPE spmon,       " 오더 생성년월 (YYYYMM)
     elapsed_days TYPE i,           " 오더 생성 후 경과일수
     aging_grp    TYPE char3,       " Aging 구간 (030/060/090/90+)
     " ── 영업 조직 ──────────────────────────────────────────────
@@ -29,39 +29,34 @@ TYPES:
     spart        TYPE spart,       " 제품군
     " ── 고객 ────────────────────────────────────────────────────
     kunnr        TYPE kunnr,       " 고객 코드
-    kunnr_name   TYPE name1_gp,    " 고객 명
-    land1        TYPE land1_gp,    " 국가
     " ── 자재 ────────────────────────────────────────────────────
     matnr        TYPE matnr,       " 자재 번호
-    arktx        TYPE arktx,       " 자재 설명
+    arktx        TYPE arktx,       " 자재 설명 (VBAP)
     matkl        TYPE matkl,       " 자재 그룹
-    mtart        TYPE mtart,       " 자재 유형
     meins        TYPE meins,       " 기본 단위
     vrkme        TYPE vrkme,       " 판매 단위
     " ── 수량 / 금액 ──────────────────────────────────────────────
-    waers        TYPE waers,       " 오더 통화
-    ord_qty      TYPE menge_d,     " 오더 수량
+    waerk        TYPE waerk,       " 오더 통화 (VBAK-WAERK)
+    ord_qty      TYPE kwmeng,      " 오더 수량 (VBAP-KWMENG)
     ord_amt      TYPE wertv8,      " 오더 금액 (VBAP-NETWR)
   END OF ty_openord.
 
 *----------------------------------------------------------------------*
-* 내부 테이블 선언
+* DB 조회용 타입
 *----------------------------------------------------------------------*
 TYPES:
-  BEGIN OF ty_vbak2,
+  BEGIN OF ty_vbak,
     vbeln TYPE vbeln_va,
-    erdat TYPE erdat,
     audat TYPE audat,
     auart TYPE auart,
     vkorg TYPE vkorg,
     vtweg TYPE vtweg,
     spart TYPE spart,
     kunnr TYPE kunnr,
-    netwr TYPE p LENGTH 8 DECIMALS 2,
     waerk TYPE waerk,
-  END OF ty_vbak2,
+  END OF ty_vbak,
 
-  BEGIN OF ty_vbap2,
+  BEGIN OF ty_vbap,
     vbeln  TYPE vbeln_va,
     posnr  TYPE posnr_va,
     matnr  TYPE matnr,
@@ -72,21 +67,15 @@ TYPES:
     kwmeng TYPE kwmeng,
     netwr  TYPE p LENGTH 8 DECIMALS 2,
     abgru  TYPE abgru,
-  END OF ty_vbap2,
+  END OF ty_vbap.
 
-  BEGIN OF ty_kna1_sel,
-    kunnr TYPE kna1-kunnr,
-    name1 TYPE kna1-name1,
-    ktokd TYPE kna1-ktokd,
-    land1 TYPE kna1-land1,
-    regio TYPE kna1-regio,
-  END OF ty_kna1_sel.
-
+*----------------------------------------------------------------------*
+* 내부 테이블 선언
+*----------------------------------------------------------------------*
 DATA:
   gt_openord  TYPE STANDARD TABLE OF ty_openord,
-  gt_vbak2    TYPE STANDARD TABLE OF ty_vbak2,
-  gt_vbap2    TYPE STANDARD TABLE OF ty_vbap2,
-  gt_kna12    TYPE STANDARD TABLE OF ty_kna1_sel,
+  gt_vbak     TYPE STANDARD TABLE OF ty_vbak,
+  gt_vbap     TYPE STANDARD TABLE OF ty_vbap,
   gs_openord  TYPE ty_openord,
   gv_lines    TYPE i,
   gv_save_cnt TYPE i.
@@ -95,12 +84,12 @@ DATA:
 * ALV
 *----------------------------------------------------------------------*
 DATA:
-  go_alv2      TYPE REF TO cl_gui_alv_grid,
-  gt_fieldcat2 TYPE lvc_t_fcat,
-  gs_fieldcat2 TYPE lvc_s_fcat,
-  gs_layout2   TYPE lvc_s_layo,
-  gt_sort2     TYPE lvc_t_sort,
-  gs_sort2     TYPE lvc_s_sort.
+  go_alv       TYPE REF TO cl_gui_alv_grid,
+  gt_fieldcat  TYPE lvc_t_fcat,
+  gs_fieldcat  TYPE lvc_s_fcat,
+  gs_layout    TYPE lvc_s_layo,
+  gt_sort      TYPE lvc_t_sort,
+  gs_sort      TYPE lvc_s_sort.
 
 *----------------------------------------------------------------------*
 * Selection Screen
@@ -119,16 +108,10 @@ SELECTION-SCREEN END OF BLOCK b1.
 
 SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-002.
   PARAMETERS:
-    p_open   TYPE char1 AS CHECKBOX DEFAULT 'X', " 미납품 포함
-    p_part   TYPE char1 AS CHECKBOX DEFAULT 'X'. " 부분납품 포함
-SELECTION-SCREEN END OF BLOCK b2.
-
-SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE TEXT-003.
-  PARAMETERS:
     p_save   TYPE xfeld AS CHECKBOX,
     p_delold TYPE xfeld AS CHECKBOX DEFAULT 'X',
-    p_nodisp TYPE xfeld AS CHECKBOX DEFAULT ' '. " No screen output
-SELECTION-SCREEN END OF BLOCK b3.
+    p_nodisp TYPE xfeld AS CHECKBOX DEFAULT ' '.  " No screen output
+SELECTION-SCREEN END OF BLOCK b2.
 
 *----------------------------------------------------------------------*
 * AT SELECTION-SCREEN
@@ -137,43 +120,40 @@ AT SELECTION-SCREEN.
   IF s_audat[] IS INITIAL.
     MESSAGE e001(zmsd) WITH '오더 생성일 기간을 입력하세요.'.
   ENDIF.
-  IF p_open = ' ' AND p_part = ' '.
-    MESSAGE e002(zmsd) WITH '조회 상태 조건을 최소 1개 이상 선택하세요.'.
-  ENDIF.
 
 *----------------------------------------------------------------------*
 * START-OF-SELECTION
 *----------------------------------------------------------------------*
 START-OF-SELECTION.
 
-  PERFORM f2_get_vbak.       " STEP1: 오더 헤더 (미완료만)
-  CHECK gt_vbak2 IS NOT INITIAL.
+  PERFORM f_get_vbak.       " STEP1: 오더 헤더 (미완료만)
+  CHECK gt_vbak IS NOT INITIAL.
 
-  PERFORM f2_get_vbap.       " STEP2: 오더 아이템
-  CHECK gt_vbap2 IS NOT INITIAL.
+  PERFORM f_get_vbap.       " STEP2: 오더 아이템
+  CHECK gt_vbap IS NOT INITIAL.
 
-  PERFORM f2_get_kna1.       " STEP3: 고객 마스터 (Lite: STEP8 위치에서 앞으로)
-
-  PERFORM f2_merge_data.     " STEP4: 통합 및 계산
-  PERFORM f2_filter_result.  " STEP5: 최종 필터
+  PERFORM f_merge_data.     " STEP3: 통합 및 계산
 
   IF p_save = 'X'.
-    PERFORM f2_save_ztable.
+    PERFORM f_save_ztable.
   ENDIF.
 
 END-OF-SELECTION.
   IF p_nodisp = ' '.
-    PERFORM f2_show_alv.
+    PERFORM f_show_alv.
   ENDIF.
 
 *----------------------------------------------------------------------*
 * FORM: STEP1 — VBAK 미완료 오더 헤더 조회
+*   ※ 워크샵 설명 포인트:
+*      GBSTK <> 'C' 조건으로 완료 오더를 제외하지만
+*      아이템 단위 상태(VBAP-ABGRU)는 VBAP에서 필터
 *----------------------------------------------------------------------*
-FORM f2_get_vbak.
-  REFRESH gt_vbak2.
+FORM f_get_vbak.
+  REFRESH gt_vbak.
 
-  SELECT vbeln erdat audat auart vkorg vtweg spart kunnr netwr waerk
-    INTO TABLE gt_vbak2
+  SELECT vbeln audat auart vkorg vtweg spart kunnr waerk
+    INTO TABLE gt_vbak
     FROM vbak
     WHERE audat IN s_audat
       AND vkorg IN s_vkorg
@@ -181,78 +161,63 @@ FORM f2_get_vbak.
       AND spart IN s_spart
       AND kunnr IN s_kunnr
       AND auart IN s_auart
-      AND vbtyp = 'C'.
+      AND vbtyp = 'C'         " 판매오더
+      AND gbstk <> 'C'.       " 완료 제외 (미결/부분처리만)
 
-  DESCRIBE TABLE gt_vbak2 LINES gv_lines.
+  DESCRIBE TABLE gt_vbak LINES gv_lines.
   MESSAGE s003(zmsd) WITH gv_lines '건의 Open Order 헤더 조회'.
 ENDFORM.
 
 *----------------------------------------------------------------------*
 * FORM: STEP2 — VBAP 오더 아이템 조회 (거부 안 된 것만)
+*   ※ 워크샵 설명 포인트:
+*      ABGRU = ' ' 조건으로 거부 라인 제외
+*      KWMENG = 오더 수량 (확정수량 BMENG는 VBEP에서만 가능)
 *----------------------------------------------------------------------*
-FORM f2_get_vbap.
-  REFRESH gt_vbap2.
+FORM f_get_vbap.
+  REFRESH gt_vbap.
 
   DATA: lt_vbeln TYPE RANGE OF vbeln_va,
         ls_vbeln LIKE LINE OF lt_vbeln.
 
-  LOOP AT gt_vbak2 INTO DATA(ls_vbak).
+  LOOP AT gt_vbak INTO DATA(ls_vbak).
     ls_vbeln-sign = 'I'. ls_vbeln-option = 'EQ'.
     ls_vbeln-low = ls_vbak-vbeln.
     APPEND ls_vbeln TO lt_vbeln.
   ENDLOOP.
 
   SELECT vbeln posnr matnr matkl arktx meins vrkme kwmeng netwr abgru
-    INTO TABLE gt_vbap2
+    INTO TABLE gt_vbap
     FROM vbap
     WHERE vbeln IN lt_vbeln
       AND matnr IN s_matnr
       AND matkl IN s_matkl
-      AND abgru = ' '.       " 거부 안 된 것
+      AND abgru = ' '.         " 거부 아이템 제외
 
-  DESCRIBE TABLE gt_vbap2 LINES gv_lines.
+  DESCRIBE TABLE gt_vbap LINES gv_lines.
   MESSAGE s004(zmsd) WITH gv_lines '건의 Open Order 아이템 조회'.
 ENDFORM.
 
 *----------------------------------------------------------------------*
-* FORM: STEP3 — KNA1 고객 마스터
+* FORM: STEP3 — 데이터 통합 및 계산
+*   ※ 워크샵 설명 포인트 (AS-IS 문제):
+*      중첩 LOOP으로 VBAK × VBAP 매칭 → 대용량시 성능 문제
+*      TO-BE DSP TF에서는 단순 SQL JOIN으로 대체됨
 *----------------------------------------------------------------------*
-FORM f2_get_kna1.
-  REFRESH gt_kna12.
-
-  DATA: lt_kunnr TYPE RANGE OF kunnr,
-        ls_kunnr LIKE LINE OF lt_kunnr.
-
-  LOOP AT gt_vbak2 INTO DATA(ls_vbak).
-    ls_kunnr-sign = 'I'. ls_kunnr-option = 'EQ'.
-    ls_kunnr-low = ls_vbak-kunnr. COLLECT ls_kunnr INTO lt_kunnr.
-  ENDLOOP.
-
-  SELECT kunnr name1 ktokd land1 regio
-    INTO TABLE gt_kna12
-    FROM kna1
-    WHERE kunnr IN lt_kunnr.
-ENDFORM.
-
-*----------------------------------------------------------------------*
-* FORM: STEP4 — 데이터 통합 및 계산
-*   ※ 이 복잡한 LOOP/계산 로직이 ERP 리소스를 점유하는 CBO 패턴
-*   ※ TO-BE에서는 TF SQL(DAYS_BETWEEN + CASE WHEN)으로 대체됨
-*----------------------------------------------------------------------*
-FORM f2_merge_data.
+FORM f_merge_data.
   REFRESH gt_openord.
 
-  LOOP AT gt_vbak2 INTO DATA(ls_vbak).
-    LOOP AT gt_vbap2 INTO DATA(ls_vbap) WHERE vbeln = ls_vbak-vbeln.
+  LOOP AT gt_vbak INTO DATA(ls_vbak).
+    LOOP AT gt_vbap INTO DATA(ls_vbap) WHERE vbeln = ls_vbak-vbeln.
 
       CLEAR gs_openord.
 
-      " ── 기본 정보 ──────────────────────────────────────────
+      " ── 기본 정보 (VBAK + VBAP) ──────────────────────────
       gs_openord-vbeln    = ls_vbak-vbeln.
       gs_openord-posnr    = ls_vbap-posnr.
       gs_openord-auart    = ls_vbak-auart.
       gs_openord-audat    = ls_vbak-audat.
-      gs_openord-audat_ym = ls_vbak-audat(6).
+      gs_openord-audat_ym = ls_vbak-audat(6).   " YYYYMM
       gs_openord-vkorg    = ls_vbak-vkorg.
       gs_openord-vtweg    = ls_vbak-vtweg.
       gs_openord-spart    = ls_vbak-spart.
@@ -262,57 +227,37 @@ FORM f2_merge_data.
       gs_openord-matkl    = ls_vbap-matkl.
       gs_openord-meins    = ls_vbap-meins.
       gs_openord-vrkme    = ls_vbap-vrkme.
-      gs_openord-waers    = ls_vbak-waerk.
-      gs_openord-ord_qty  = ls_vbap-kwmeng.
-      gs_openord-ord_amt  = ls_vbap-netwr.   " 아이템 단가 기준 금액
+      gs_openord-waerk    = ls_vbak-waerk.
+      gs_openord-ord_qty  = ls_vbap-kwmeng.     " 오더 수량
+      gs_openord-ord_amt  = ls_vbap-netwr.      " 아이템 금액 (VBAP)
 
       " ── 경과일수 및 Aging 구간 계산 ──────────────────────
-      " ※ TO-BE TF에서 DAYS_BETWEEN(AUDAT, CURRENT_DATE) + CASE WHEN으로 대체
+      " ※ TO-BE TF: DAYS_BETWEEN(AUDAT, CURRENT_DATE) + CASE WHEN
       gs_openord-elapsed_days = sy-datum - ls_vbak-audat.
-      IF gs_openord-elapsed_days <= 30.
-        gs_openord-aging_grp = '030'.
-      ELSEIF gs_openord-elapsed_days <= 60.
-        gs_openord-aging_grp = '060'.
-      ELSEIF gs_openord-elapsed_days <= 90.
-        gs_openord-aging_grp = '090'.
-      ELSE.
-        gs_openord-aging_grp = '90+'.
-      ENDIF.
-
-      " ── 고객 정보 ──────────────────────────────────────────
-      READ TABLE gt_kna12 INTO DATA(ls_kna1) WITH KEY kunnr = ls_vbak-kunnr.
-      IF sy-subrc = 0.
-        gs_openord-kunnr_name = ls_kna1-name1.
-        gs_openord-land1      = ls_kna1-land1.
-      ENDIF.
+      CASE 'X'.
+        WHEN gs_openord-elapsed_days <= 30.
+          gs_openord-aging_grp = '030'.
+        WHEN gs_openord-elapsed_days <= 60.
+          gs_openord-aging_grp = '060'.
+        WHEN gs_openord-elapsed_days <= 90.
+          gs_openord-aging_grp = '090'.
+        WHEN OTHERS.
+          gs_openord-aging_grp = '90+'.
+      ENDCASE.
 
       APPEND gs_openord TO gt_openord.
 
-    ENDLOOP.  " gt_vbap2
-  ENDLOOP.    " gt_vbak2
+    ENDLOOP.  " gt_vbap
+  ENDLOOP.    " gt_vbak
 
   DESCRIBE TABLE gt_openord LINES gv_lines.
   MESSAGE s011(zmsd) WITH gv_lines '건의 Open Order 데이터 생성'.
 ENDFORM.
 
 *----------------------------------------------------------------------*
-* FORM: STEP5 — 최종 필터 적용
-*----------------------------------------------------------------------*
-FORM f2_filter_result.
-
-  " 상태 필터 (미납품/부분납품 선택)
-  " Lite: VBFA/LIPS 없으므로 납품수량 기반 상태 판별 불가
-  " → 필터 선택지는 유지(Selection Screen 구조 보존) 단, 실제 필터링 스킵
-  " (워크샵에서 "Full 버전은 이 필터도 동작한다"고 설명 포인트로 활용)
-
-  DESCRIBE TABLE gt_openord LINES gv_lines.
-  MESSAGE s012(zmsd) WITH '필터 적용 후 ' gv_lines '건'.
-ENDFORM.
-
-*----------------------------------------------------------------------*
 * FORM: Z-Table 저장 (ZSDT_OO_LITE)
 *----------------------------------------------------------------------*
-FORM f2_save_ztable.
+FORM f_save_ztable.
   DATA:
     lt_db TYPE STANDARD TABLE OF zsdt_oo_lite,
     ls_db TYPE zsdt_oo_lite.
@@ -324,7 +269,6 @@ FORM f2_save_ztable.
         AND audat IN s_audat.
   ENDIF.
 
-  " 단일 테이블 저장
   LOOP AT gt_openord INTO gs_openord.
     CLEAR ls_db.
     ls_db-vbeln        = gs_openord-vbeln.
@@ -334,11 +278,11 @@ FORM f2_save_ztable.
     ls_db-vkorg        = gs_openord-vkorg.
     ls_db-spart        = gs_openord-spart.
     ls_db-kunnr        = gs_openord-kunnr.
-    ls_db-kunnr_name   = gs_openord-kunnr_name.
     ls_db-matnr        = gs_openord-matnr.
     ls_db-matkl        = gs_openord-matkl.
     ls_db-ord_qty      = gs_openord-ord_qty.
     ls_db-ord_amt      = gs_openord-ord_amt.
+    ls_db-waerk        = gs_openord-waerk.
     ls_db-elapsed_days = gs_openord-elapsed_days.
     ls_db-aging_grp    = gs_openord-aging_grp.
     APPEND ls_db TO lt_db.
@@ -354,52 +298,50 @@ ENDFORM.
 *----------------------------------------------------------------------*
 * FORM: ALV 출력
 *----------------------------------------------------------------------*
-FORM f2_show_alv.
+FORM f_show_alv.
 
-  DEFINE m_fcat2.
-    CLEAR gs_fieldcat2.
-    gs_fieldcat2-fieldname = &1.
-    gs_fieldcat2-coltext   = &2.
-    gs_fieldcat2-outputlen = &3.
-    gs_fieldcat2-just      = &4.
-    gs_fieldcat2-do_sum    = &5.
-    APPEND gs_fieldcat2 TO gt_fieldcat2.
+  DEFINE m_fcat.
+    CLEAR gs_fieldcat.
+    gs_fieldcat-fieldname = &1.
+    gs_fieldcat-coltext   = &2.
+    gs_fieldcat-outputlen = &3.
+    gs_fieldcat-just      = &4.
+    gs_fieldcat-do_sum    = &5.
+    APPEND gs_fieldcat TO gt_fieldcat.
   END-OF-DEFINITION.
 
-  m_fcat2 'AGING_GRP'    'Aging'      5  'C' ' '.
-  m_fcat2 'VKORG'        '영업조직'   4  'C' ' '.
-  m_fcat2 'VTWEG'        '유통경로'   2  'C' ' '.
-  m_fcat2 'SPART'        '제품군'     4  'C' ' '.
-  m_fcat2 'MATKL'        '자재그룹'   9  'C' ' '.
-  m_fcat2 'KUNNR'        '고객코드'  10  'C' ' '.
-  m_fcat2 'KUNNR_NAME'   '고객명'    20  'L' ' '.
-  m_fcat2 'LAND1'        '국가'       3  'C' ' '.
-  m_fcat2 'MATNR'        '자재번호'  18  'L' ' '.
-  m_fcat2 'ARKTX'        '자재명'    20  'L' ' '.
-  m_fcat2 'VBELN'        '오더번호'  10  'C' ' '.
-  m_fcat2 'POSNR'        '아이템'     6  'C' ' '.
-  m_fcat2 'AUART'        '오더유형'   4  'C' ' '.
-  m_fcat2 'AUDAT'        '오더일'     8  'C' ' '.
-  m_fcat2 'AUDAT_YM'     '년월'       6  'C' ' '.
-  m_fcat2 'ELAPSED_DAYS' '경과일'     5  'R' ' '.
-  m_fcat2 'WAERS'        '통화'       5  'C' ' '.
-  m_fcat2 'ORD_QTY'      '오더수량'  13  'R' 'X'.
-  m_fcat2 'ORD_AMT'      '오더금액'  15  'R' 'X'.
+  m_fcat 'AGING_GRP'    'Aging'       5  'C' ' '.
+  m_fcat 'VKORG'        '영업조직'    4  'C' ' '.
+  m_fcat 'VTWEG'        '유통경로'    2  'C' ' '.
+  m_fcat 'SPART'        '제품군'      4  'C' ' '.
+  m_fcat 'KUNNR'        '고객코드'   10  'C' ' '.
+  m_fcat 'MATKL'        '자재그룹'    9  'C' ' '.
+  m_fcat 'MATNR'        '자재번호'   18  'L' ' '.
+  m_fcat 'ARKTX'        '자재명'     20  'L' ' '.
+  m_fcat 'VBELN'        '오더번호'   10  'C' ' '.
+  m_fcat 'POSNR'        '아이템'      6  'C' ' '.
+  m_fcat 'AUART'        '오더유형'    4  'C' ' '.
+  m_fcat 'AUDAT'        '오더일'      8  'C' ' '.
+  m_fcat 'AUDAT_YM'     '년월'        6  'C' ' '.
+  m_fcat 'ELAPSED_DAYS' '경과일'      5  'R' ' '.
+  m_fcat 'WAERK'        '통화'        5  'C' ' '.
+  m_fcat 'ORD_QTY'      '오더수량'   13  'R' 'X'.
+  m_fcat 'ORD_AMT'      '오더금액'   15  'R' 'X'.
 
-  gs_layout2-zebra      = 'X'.
-  gs_layout2-cwidth_opt = 'X'.
-  gs_layout2-grid_title = '【Open Order 현황 (Lite)】'.
+  gs_layout-zebra      = 'X'.
+  gs_layout-cwidth_opt = 'X'.
+  gs_layout-grid_title = '【Open Order 현황 (Lite — VBAK+VBAP)】'.
 
-  gs_sort2-fieldname = 'VKORG'.     gs_sort2-up = 'X'. APPEND gs_sort2 TO gt_sort2.
-  gs_sort2-fieldname = 'KUNNR'.     gs_sort2-up = 'X'. APPEND gs_sort2 TO gt_sort2.
-  gs_sort2-fieldname = 'AGING_GRP'. gs_sort2-up = 'X'. APPEND gs_sort2 TO gt_sort2.
+  gs_sort-fieldname = 'VKORG'.     gs_sort-up = 'X'. APPEND gs_sort TO gt_sort.
+  gs_sort-fieldname = 'KUNNR'.     gs_sort-up = 'X'. APPEND gs_sort TO gt_sort.
+  gs_sort-fieldname = 'AGING_GRP'. gs_sort-up = 'X'. APPEND gs_sort TO gt_sort.
 
   CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY_LVC'
     EXPORTING
       i_callback_program   = sy-repid
-      is_layout_lvc        = gs_layout2
-      it_fieldcat_lvc      = gt_fieldcat2
-      it_sort_lvc          = gt_sort2
+      is_layout_lvc        = gs_layout
+      it_fieldcat_lvc      = gt_fieldcat
+      it_sort_lvc          = gt_sort
       i_save               = 'A'
     TABLES
       t_outtab             = gt_openord
