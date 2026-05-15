@@ -38,7 +38,7 @@ SAP Datasphere → Delta Share → SAP Databricks
 - **Continue with SSO** 선택
 - **default workspace** 선택
 
-![SAP Databricks Welcome 화면](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_4_image02.png)
+![SAP Databricks Welcome 화면](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_4_image02.png)
 
 ---
 
@@ -55,7 +55,7 @@ My organization
               └── zcashflow  ← 여기 클릭
 ```
 
-![zcashflow 테이블 — Sample Data 탭](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_4_image03.png)
+![zcashflow 테이블 — Sample Data 탭](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_4_image03.png)
 
 - **Sample Data** 탭에서 데이터 확인 (컴퓨팅 리소스가 없으면 **Select compute → Serverless → Start**)
 - 이것이 SAP BDC에서 공유된 **실제 현금 흐름 데이터**
@@ -80,7 +80,7 @@ My organization
 
 ### Step 4 · 데이터 탐색 Notebook 임포트
 
-![Workspace → Import 화면](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_4_image04.png)
+![Workspace → Import 화면](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_4_image04.png)
 
 1. Learning Journey에서 **`10_Exploratory_Data_Analysis.py`** 다운로드
 2. 좌측 **Workspace** → Users → 내 사용자명 우클릭 → **Import**
@@ -115,7 +115,7 @@ Workspace → Project_Artifacts
 - "Only my experiments" 체크 해제 → **"50 Cash flow"** 검색
 - **Derek Ian** 실험 선택 → 회사 코드별 모델 최적화 실행 결과 확인
 
-![MLflow — 회사 코드별 실험 결과 (Color-coded 차트)](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_4_image05.png)
+![MLflow — 회사 코드별 실험 결과 (Color-coded 차트)](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_4_image05.png)
 
 - 회사 코드 **1730** 실행 결과 클릭
 - Metrics, Parameters, Artifacts 탭 확인
@@ -138,7 +138,7 @@ Workspace → Project_Artifacts
 
 ### Step 9 · Delta Share 생성
 
-![Catalog — cashflow_forecast → Share → Share via Delta Sharing](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_4_image06.png)
+![Catalog — cashflow_forecast → Share → Share via Delta Sharing](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_4_image06.png)
 
 1. **Catalog** → cashflow_data_product → cashflow → **cashflow_forecast** 선택
 2. **Share** → **Share via Delta Sharing** 클릭
@@ -153,7 +153,7 @@ Workspace → Project_Artifacts
 Catalog → ⚙️ Gear → **Delta Sharing** → **Shared by me** 탭  
 → 사용자명 `AC317935U01`로 필터 → 방금 만든 Share 확인
 
-![Delta Sharing — Shared by me 탭](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_4_image07.png)
+![Delta Sharing — Shared by me 탭](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_4_image07.png)
 
 ---
 
@@ -183,7 +183,7 @@ SAP Datasphere → **Catalog & Marketplace** → Search
 2. 검색어: `cashflow forecast data product from AC317935U01`
 3. 목록에서 내 Data Product 확인
 
-![Datasphere Catalog — cashflow forecast data product 검색 결과](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_4_image08.png)
+![Datasphere Catalog — cashflow forecast data product 검색 결과](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_4_image08.png)
 
 > ⏳ Catalog에 즉시 나타나지 않을 수 있습니다. 몇 분 대기 후 재검색하거나,  
 > 강사가 미리 준비한 **pre-delivered 데이터 상품**을 다음 단계에서 사용합니다.

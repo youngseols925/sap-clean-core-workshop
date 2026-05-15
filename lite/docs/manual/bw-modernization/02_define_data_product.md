@@ -61,14 +61,14 @@ Datasphere BW Ingestion Space
 
 ### Step 1 · Data Sharing Cockpit 접속
 
-![Data Sharing Cockpit 메인 화면](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_3_image03.png)
+![Data Sharing Cockpit 메인 화면](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_3_image03.png)
 
 - SAP BDC 메인 메뉴에서 **Data Sharing Cockpit** 선택
 - 기 생성된 Data Product 목록 확인
 
 ### Step 2 · Data Product 생성 방식 확인
 
-![Data Product 상세 화면 — 소스 테이블 매핑](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_3_image05.png)
+![Data Product 상세 화면 — 소스 테이블 매핑](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_3_image05.png)
 
 Data Product 생성 시 설정 항목:
 | 항목 | 예시값 |
@@ -80,14 +80,14 @@ Data Product 생성 시 설정 항목:
 
 ### Step 3 · Catalog 게시 확인
 
-[📸 스크린샷: BDC Catalog — Cash Flow Data Product 검색 결과]
+![BDC Catalog — Cash Flow Data Product 검색 결과](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_3_image03.png)
 
 - **Catalog & Marketplace** → Search에서 Data Product 검색
 - IT Data Analyst가 등록하면 전사 누구나 검색·구독 가능
 
 ### Step 4 · Databricks 공유 설정 확인
 
-[📸 스크린샷: Data Product — Databricks 공유 설정 화면]
+![Data Product — Databricks 공유 설정 화면](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_3_image05.png)
 
 - **Recipients**: `sap-business-data-cloud` (SAP BDC 시스템)
 - 공유 후 Databricks Catalog의 **Delta Shares Received** 섹션에 등장

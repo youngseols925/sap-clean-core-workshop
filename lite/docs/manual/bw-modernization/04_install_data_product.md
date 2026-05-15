@@ -39,17 +39,17 @@ SAP BDC Catalog
 - Username: `AC317935U01`
 - Password: (강사 제공)
 
-![SAP Datasphere 메인 화면](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_5_image05.png)
+![SAP Datasphere 메인 화면](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_5_image05.png)
 
 ### Step 2 · Catalog & Marketplace 접속
 
-![좌측 네비게이션 — Catalog & Marketplace → Search](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_5_image06.png)
+![좌측 네비게이션 — Catalog & Marketplace → Search](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_5_image06.png)
 
 좌측 네비게이션 → **Catalog & Marketplace** → **Search**
 
 ### Step 3 · 검색 필터 설정
 
-![필터 아이콘 클릭 — Data Products + Databricks 필터 선택](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_5_image07.png)
+![필터 아이콘 클릭 — Data Products + Databricks 필터 선택](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_5_image07.png)
 
 1. 🔍 **Filter** 아이콘 클릭
 2. **All → Data Products** 선택
@@ -64,7 +64,7 @@ cashflow forecast data product
 ```
 → **Enter** 또는 🔍 클릭
 
-![검색 결과 — cashflow forecast data product](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_5_image08.png)
+![검색 결과 — cashflow forecast data product](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_5_image08.png)
 
 > **내 것이 없으면**: `cashflow forecast data product`(강사 제공 pre-delivered 버전) 사용
 
@@ -72,7 +72,7 @@ cashflow forecast data product
 
 검색 결과에서 **cashflow forecast data product** 선택
 
-![Data Product 상세 화면 — 메타데이터, 버전 정보](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_4_image71.png)
+![Data Product 상세 화면 — 메타데이터, 버전 정보](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_4_image71.png)
 
 확인 항목:
 - Source: SAP Databricks
@@ -81,7 +81,7 @@ cashflow forecast data product
 
 ### Step 6 · Data Product 설치
 
-![Install 버튼 클릭](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_5_image09.png)
+![Install 버튼 클릭](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_5_image09.png)
 
 1. **Install** 버튼 클릭
 2. 대상 스페이스: `AC317935U01` 선택
@@ -89,7 +89,7 @@ cashflow forecast data product
 
 ### Step 7 · 설치 완료 확인
 
-![Data Builder — cashflow_forecast 테이블 확인](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_5_image10.png)
+![Data Builder — cashflow_forecast 테이블 확인](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_5_image10.png)
 
 **Data Builder** → 내 스페이스에서 `cashflow_forecast` 테이블 확인  
 **Data Preview**로 예측 데이터 레코드 확인

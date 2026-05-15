@@ -49,13 +49,13 @@ DDS_... (ADSO 복제본)         cashflow_forecast
 
 ### Step 1 · 새 Graphical View 생성
 
-![Data Builder → New Graphical View 타일](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_6_image02.png)
+![Data Builder → New Graphical View 타일](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_6_image02.png)
 
 **Data Builder** → 내 스페이스 선택 → **New Graphical View** 클릭
 
 ### Step 2 · BW 실적 데이터 소스 추가
 
-![Repository 탭 검색 — ZCASHACT](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_6_image03.png)
+![Repository 탭 검색 — ZCASHACT](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_6_image03.png)
 
 우측 **Repository** 탭에서 검색:
 ```
@@ -83,7 +83,7 @@ Actual Cashflow - ZCASHACT
 | 1st Currency Key (COMPCODECURRENCY) | **COMPANYCODECURRENCY** |
 | 2nd Currency Key (TRANSACTIONCURRENCY) | **TRANSACTIONCURRENCY** |
 
-![Rename 완료된 Projection 노드 컬럼 목록](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_6_image04.png)
+![Rename 완료된 Projection 노드 컬럼 목록](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_6_image04.png)
 
 ---
 
@@ -108,13 +108,13 @@ TO_DATE(POSTINGDATE)
 
 **Validate** → 데이터 타입이 **Date**로 변경 확인
 
-![TO_DATE 표현식 입력 및 Validate 결과](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_6_image05.png)
+![TO_DATE 표현식 입력 및 Validate 결과](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_6_image05.png)
 
 ---
 
 ### Step 6 · UNION으로 두 소스 결합
 
-![Calculated Columns 1 노드를 Projection 1 위에 드롭 → Union 선택](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_6_image06.png)
+![Calculated Columns 1 노드를 Projection 1 위에 드롭 → Union 선택](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_6_image06.png)
 
 `Calculated Columns 1` 노드를 `Projection 1` 노드 위로 **드래그 앤 드롭** → **Union** 선택
 
@@ -182,7 +182,7 @@ TO_DOUBLE(CASHFLOW_ACTUAL)
 - `CASHFLOW_FORECAST_LOWER` → **Change to Measure**
 - `CASHFLOW_FORECAST_UPPER` → **Change to Measure**
 
-![Fact View 속성 — Measures 4개 + Attributes 4개](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_6_image07.png)
+![Fact View 속성 — Measures 4개 + Attributes 4개](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_6_image07.png)
 
 ---
 
@@ -214,7 +214,7 @@ SAP.TIME.VIEW_DIMENSION_DAY
 
 ### Step 13 · Fact View 저장 및 배포
 
-![Deploy 아이콘 클릭](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_6_image08.png)
+![Deploy 아이콘 클릭](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_6_image08.png)
 
 헤더 메뉴 **Deploy** (🚀) 클릭
 
@@ -228,7 +228,7 @@ SAP.TIME.VIEW_DIMENSION_DAY
 
 Output 노드 클릭 → **Data Viewer** → 실적 + 예측 데이터 통합 결과 확인
 
-![Data Viewer — 실적(CASHFLOW_ACTUAL) + 예측(CASHFLOW_FORECAST) 레코드](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_6_image09.png)
+![Data Viewer — 실적(CASHFLOW_ACTUAL) + 예측(CASHFLOW_FORECAST) 레코드](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_6_image09.png)
 
 ---
 
@@ -238,7 +238,7 @@ Output 노드 클릭 → **Data Viewer** → 실적 + 예측 데이터 통합 �
 
 Output 노드 클릭 → Properties 패널 → **Create Analytic Model** 링크 클릭
 
-![Analytic Model 에디터 — Fact View + Time Dimension 자동 연결](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_6_image10.png)
+![Analytic Model 에디터 — Fact View + Time Dimension 자동 연결](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_6_image10.png)
 
 ### Step 16 · AM 이름 설정
 
@@ -260,7 +260,7 @@ Properties 패널:
 - 왼쪽 패널에서 `COMPANYCODE` Dimension 선택 → Rows에 추가
 - 회사 코드별 실적/예측 금액 확인
 
-![AM Preview — COMPANYCODE별 CASHFLOW_ACTUAL + CASHFLOW_FORECAST](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_6_image11.png)
+![AM Preview — COMPANYCODE별 CASHFLOW_ACTUAL + CASHFLOW_FORECAST](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_6_image11.png)
 
 ---
 

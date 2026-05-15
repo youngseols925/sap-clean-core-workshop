@@ -44,14 +44,14 @@ SAP BW                           SAP Datasphere
 
 ### Step 1 · BW Cockpit에서 DataStore 확인
 
-![BW Cockpit — ZCASHACT DataStore 조회 화면](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_2_image02.png)
+![BW Cockpit — ZCASHACT DataStore 조회 화면](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_2_image02.png)
 
 - BW Cockpit에서 현금 흐름 데이터가 저장된 **ZCASHACT** DataStore를 조회합니다
 - 데이터 구조와 레코드 수를 확인합니다
 
 ### Step 2 · Data Subscription 정의
 
-![Data Product Generator — Data Subscription 생성 화면](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_2_image05b.png)
+![Data Product Generator — Data Subscription 생성 화면](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_2_image05b.png)
 
 Data Subscription 생성 시 지정 항목:
 - **소스**: BW DataStore (ZCASHACT)
@@ -60,14 +60,14 @@ Data Subscription 생성 시 지정 항목:
 
 ### Step 3 · Data Subscription 실행
 
-![Data Subscription 실행 결과 — 전송된 레코드 수](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_2_image08b.png)
+![Data Subscription 실행 결과 — 전송된 레코드 수](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_2_image08b.png)
 
 - Subscription을 **Run** 하면 BW 레코드가 Datasphere로 전송됩니다
 - 완료 후 Datasphere의 BW Ingestion Space에 Local Table이 생성됩니다
 
 ### Step 4 · SAP Datasphere에서 데이터 확인
 
-![Datasphere Data Builder — DDS_... 테이블 데이터 미리보기](https://da4ug0lohul1.cloudfront.net/prod/AcademyContentFileImage/Trial_BTP-BDC/545_BW_Modernization/Images/545_2_image12b.png)
+![Datasphere Data Builder — DDS_... 테이블 데이터 미리보기](https://raw.githubusercontent.com/youngseols925/sap-clean-core-workshop/main/lite/docs/manual/bw-modernization/images/545_2_image12b.png)
 
 - Data Builder → BW Ingestion Space에서 생성된 테이블 확인
 - **Data Preview**로 실제 현금 흐름 데이터 레코드 확인
